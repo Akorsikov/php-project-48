@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+$autoloadPathGlobal = __DIR__ . '/../../../autoload.php';
+$autoloadPathLocal = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPathGlobal)) {
+    require_once $autoloadPathGlobal;
+} else {
+    require_once $autoloadPathLocal;
+}
+
+$doc = <<<DOC
+
+Generate diff
+
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+
+Options:
+  -h --help                 Show this screen
+  -v --version              Show version
+\n
+DOC;
+
+$args = Docopt::handle($doc, array('version' => 'gendiff 0.1'));
+echo 'args: ', $args;

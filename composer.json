@@ -1,0 +1,26 @@
+{
+    "name": "hexlet/code",
+    "description": "difference measurer",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        },
+        "files": [
+            "./vendor/docopt/docopt/src/docopt.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Korsikov Aleksandr",
+            "email": "akors@mail.ru"
+        }
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    },
+    "bin": [
+        "bin/gendiff"
+    ]
+}
