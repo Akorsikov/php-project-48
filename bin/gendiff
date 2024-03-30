@@ -16,7 +16,7 @@ Generate diff
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format <frm>] <firstFile> <secondFile>
+  gendiff [--format <frm>] (<firstFile> <secondFile>)
 
 Options:
   -h --help                 Show this screen
