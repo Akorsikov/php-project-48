@@ -36,10 +36,13 @@ $diff = genDiff($nameFirstFile, $nameSecondFile);
 echo($diff);
 
 /**
- * @param string $pathFirst
- * @param string $pathSecond
+ * Function genDiff is constructed based on how the files have changed
+ * relative to each other, the keys are output in alphabetical order.
  * 
- * @return string
+ * @param string $pathFirst  path to first file
+ * @param string $pathSecond path to second file
+ * 
+ * @return string file differences in relation to each other
  */
 function genDiff(string $pathFirst, string $pathSecond): string
 {
