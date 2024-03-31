@@ -22,7 +22,66 @@ Options:
   -h --help                 Show this screen
   -v --version              Show version
   --format <frm>            Report format [default: stylish]
-\n
 DOC;
 
-Docopt::handle($doc, array('version' => 'gendiff 0.1'));
+$args = Docopt::handle($doc, array('version' => 'gendiff 0.1'));
+$nameFirstFile = $args['<firstFile>'];
+$nameSecondFile = $args['<secondFile>'];
+
+if (!is_readable($nameFirstFile) or !is_readable($nameSecondFile)) {
+  exit('The file(s) do not exist or are unreadable');
+}
+$diff = genDiff($nameFirstFile, $nameSecondFile);
+
+echo($diff);
+
+/**
+ * @param string $pathFirst
+ * @param string $pathSecond
+ * 
+ * @return string
+ */
+function genDiff(string $pathFirst, string $pathSecond)
+{
+  $firstFileContents = json_decode(file_get_contents($pathFirst), true);
+  $secondFileContents = json_decode(file_get_contents($pathSecond), true);
+  $result = '';
+
+  $firstFileKeys = array_keys($firstFileContents);
+  $secondFileKeys = array_keys($secondFileContents);
+  $listAllKeys = array_unique(array_merge($firstFileKeys, $secondFileKeys));
+  sort($listAllKeys, SORT_STRING);
+
+  foreach ($listAllKeys as $key) {
+
+    $firstFileKeyExists = array_key_exists($key, $firstFileContents);
+    $secondFileKeyExists = array_key_exists($key, $secondFileContents);
+
+    if ($firstFileKeyExists and is_bool($firstFileContents[$key])) {
+      $firstFileContents[$key] = var_export($firstFileContents[$key], true);
+    }
+
+    if ($secondFileKeyExists and is_bool($secondFileContents[$key])) {
+      $secondFileContents[$key] = var_export($secondFileContents[$key], true);
+    }
+
+    switch (true) {
+      case $firstFileKeyExists and $secondFileKeyExists:
+        if ($firstFileContents[$key] === $secondFileContents[$key]) {
+          $result .= "    {$key}: {$firstFileContents[$key]}\n";
+        } else {
+          $result .= "  - {$key}: {$firstFileContents[$key]}\n";
+          $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+        }
+        break;
+      case $firstFileKeyExists and !$secondFileKeyExists:
+        $result .= "  - {$key}: {$firstFileContents[$key]}\n";
+        break;
+      case !$firstFileKeyExists and $secondFileKeyExists:
+        $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+        break;
+      default: exit('Error: Key is not exists!');
+    }
+  }
+  return "{\n{$result}}\n";
+}
