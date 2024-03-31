@@ -41,7 +41,7 @@ echo($diff);
  * 
  * @return string
  */
-function genDiff(string $pathFirst, string $pathSecond)
+function genDiff(string $pathFirst, string $pathSecond): string
 {
   $firstFileContents = json_decode(file_get_contents($pathFirst), true);
   $secondFileContents = json_decode(file_get_contents($pathSecond), true);
