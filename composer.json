@@ -21,7 +21,8 @@
         "docopt/docopt": "^1.0"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "phpstan/phpstan": "^1.10"
     },
     "bin": [
         "bin/gendiff"
