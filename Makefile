@@ -6,3 +6,6 @@ lint-fix:
 
 analise:
 	vendor/bin/phpstan analyse --level 8 src bin
+
+test:
+	composer exec --verbose phpunit tests
