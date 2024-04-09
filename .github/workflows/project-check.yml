@@ -48,8 +48,8 @@ jobs:
         uses: paambaati/codeclimate-action@v5
         # Add Code Climate secret key
         env:
-          CC_TEST_REPORTER_ID: ${{82b170ec026a5893e92ab6f2aac731fee01559a9a62658468e8a23b8f1ba76b9}}
+          CC_TEST_REPORTER_ID: ${{ secrets.AKORS_SECRET }}
         with:
           coverageCommand: make test-coverage
-          coverageLocations: coverage/logs/clover.xml:clover
+          coverageLocations: build/logs/clover.xml:clover
           debug: true
