@@ -2,6 +2,8 @@
 
 namespace Php\Project\Diff;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Function genDiff is constructed based on how the files have changed
  * relative to each other, the keys are output in alphabetical order.
@@ -61,7 +63,7 @@ function genDiff(string $pathFirst, string $pathSecond): string
 }
 
 /**
- * Function receives the JSON-file content and decodes it into an associative array
+ * Function receives the JSON or YML/YAML file content and decodes it into an associative array
  *
  * @param string $path path to JSON-file
  *
@@ -70,6 +72,13 @@ function genDiff(string $pathFirst, string $pathSecond): string
 function getFileContents(string $path): array
 {
     $content = (string) file_get_contents($path);
+
+    switch (pathinfo($path)['extension']) {
+        case 'yaml' or 'yml':
+            $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
+            $content = json_encode($object);
+            //no break
+    }
 
     return json_decode($content, true);
 }
