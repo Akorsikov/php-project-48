@@ -17,4 +17,13 @@ class UserTest extends TestCase
 
         $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
     }
+
+    public function testGenDiff2(): void
+    {
+        $path1 = './tests/fixtures/file2.json';
+        $path2 = './tests/fixtures/file1.json';
+        $fileDiff = './tests/fixtures/difference2.txt';
+
+        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
+    }
 }
