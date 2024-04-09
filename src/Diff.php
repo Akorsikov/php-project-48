@@ -14,7 +14,7 @@ namespace Php\Project\Diff;
 function genDiff(string $pathFirst, string $pathSecond): string
 {
     if (!is_readable($pathFirst) or !is_readable($pathSecond)) {
-        exit('The file(s) do not exist or are unreadable');
+        exit("Error: The file(s) do not exist or are unreadable\n");
     }
 
     $firstFileContents = getFileContents($pathFirst);
