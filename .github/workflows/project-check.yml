@@ -44,12 +44,12 @@ jobs:
       # Publish code coverage on Code Climate
       # https://github.com/paambaati/codeclimate-action
       # NOTE: uncomment for using workflow
-      # - name: Run test & publish code coverage
-      #   uses: paambaati/codeclimate-action@v5
-      #   # Add Code Climate secret key
-      #   env:
-      #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      #   with:
-      #     coverageCommand: make test-coverage
-      #     coverageLocations: build/logs/clover.xml:clover
-      #     debug: true
+      - name: Run test & publish code coverage
+        uses: paambaati/codeclimate-action@v5
+        # Add Code Climate secret key
+        env:
+          CC_TEST_REPORTER_ID: ${{82b170ec026a5893e92ab6f2aac731fee01559a9a62658468e8a23b8f1ba76b9}}
+        with:
+          coverageCommand: make test-coverage
+          coverageLocations: coverage/logs/clover.xml:clover
+          debug: true
