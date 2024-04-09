@@ -26,4 +26,13 @@ class UserTest extends TestCase
 
         $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
     }
+
+    public function testGenDiffYmlFiles(): void
+    {
+        $path1 = './tests/fixtures/file1.yml';
+        $path2 = './tests/fixtures/file2.yml';
+        $fileDiff = './tests/fixtures/difference.txt';
+
+        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
+    }
 }
