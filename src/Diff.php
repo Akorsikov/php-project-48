@@ -32,11 +32,11 @@ function genDiff(string $pathFirst, string $pathSecond): string
         $firstFileKeyExists = array_key_exists($key, $firstFileContents);
         $secondFileKeyExists = array_key_exists($key, $secondFileContents);
 
-        if ($firstFileKeyExists and is_bool($firstFileContents[$key])) {
+        if ($firstFileKeyExists) {
             $firstFileContents[$key] = var_export($firstFileContents[$key], true);
         }
 
-        if ($secondFileKeyExists and is_bool($secondFileContents[$key])) {
+        if ($secondFileKeyExists) {
             $secondFileContents[$key] = var_export($secondFileContents[$key], true);
         }
 
