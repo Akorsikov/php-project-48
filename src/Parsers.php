@@ -14,8 +14,9 @@ use Symfony\Component\Yaml\Yaml;
 function getFileContents(string $path): array
 {
     $content = (string) file_get_contents($path);
+    $extention = pathinfo($path)['extension'];
 
-    if (in_array(pathinfo($path)['extension'], ['yml', 'yaml'], true)) {
+    if ($extention === 'yml' or $extention === 'yaml') {
         $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
         $content = json_encode($object);
     }
