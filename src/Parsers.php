@@ -15,11 +15,9 @@ function getFileContents(string $path): array
 {
     $content = (string) file_get_contents($path);
 
-    switch (pathinfo($path)['extension']) {
-        case 'yaml' or 'yml':
-            $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
-            $content = json_encode($object);
-            //no break
+    if (in_array(pathinfo($path)['extension'], ['yml', 'yaml'], true)) {
+        $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
+        $content = json_encode($object);
     }
 
     return json_decode($content, true);
