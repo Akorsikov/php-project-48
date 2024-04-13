@@ -21,43 +21,84 @@ function genDiff(string $pathFirst, string $pathSecond): string
 
     $firstFileContents = getFileContents($pathFirst);
     $secondFileContents = getFileContents($pathSecond);
-    $result = '';
+    $result = getDifference($firstFileContents, $secondFileContents, '');
 
-    $firstFileKeys = array_keys($firstFileContents);
-    $secondFileKeys = array_keys($secondFileContents);
-    $listAllKeys = array_unique(array_merge($firstFileKeys, $secondFileKeys));
+    // $firstFileKeys = array_keys($firstFileContents);
+    // $secondFileKeys = array_keys($secondFileContents);
+    // $listAllKeys = array_unique(array_merge($firstFileKeys, $secondFileKeys));
+    // sort($listAllKeys, SORT_STRING);
+
+    // foreach ($listAllKeys as $key) {
+    //     $firstFileKeyExists = array_key_exists($key, $firstFileContents);
+    //     $secondFileKeyExists = array_key_exists($key, $secondFileContents);
+
+    //     if ($firstFileKeyExists) {
+    //         $firstFileContents[$key] = var_export($firstFileContents[$key], true);
+    //     }
+
+    //     if ($secondFileKeyExists) {
+    //         $secondFileContents[$key] = var_export($secondFileContents[$key], true);
+    //     }
+
+    //     switch (true) {
+    //         case $firstFileKeyExists and $secondFileKeyExists:
+    //             if ($firstFileContents[$key] === $secondFileContents[$key]) {
+    //                 $result .= "    {$key}: {$firstFileContents[$key]}\n";
+    //             } else {
+    //                 $result .= "  - {$key}: {$firstFileContents[$key]}\n";
+    //                 $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+    //             }
+    //             break;
+    //         case $firstFileKeyExists and !$secondFileKeyExists:
+    //             $result .= "  - {$key}: {$firstFileContents[$key]}\n";
+    //             break;
+    //         case !$firstFileKeyExists and $secondFileKeyExists:
+    //             $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+    //             break;
+    //         default:
+    //             exit('Error: Key is not exists!');
+    //     }
+    // }
+    return "{\n{$result}}\n";
+}
+
+function getDifference(array $firstArray, array $secondArray, string $accumDifference): string
+{
+    $firstListKeys = array_keys($firstArray);
+    $secondListKeys = array_keys($secondArray);
+    $listAllKeys = array_unique(array_merge($firstListKeys, $secondListKeys));
     sort($listAllKeys, SORT_STRING);
 
     foreach ($listAllKeys as $key) {
-        $firstFileKeyExists = array_key_exists($key, $firstFileContents);
-        $secondFileKeyExists = array_key_exists($key, $secondFileContents);
+        $firstArrayKeyExists = array_key_exists($key, $firstArray);
+        $secondArrayKeyExists = array_key_exists($key, $secondArray);
 
-        if ($firstFileKeyExists) {
-            $firstFileContents[$key] = var_export($firstFileContents[$key], true);
+        if ($firstArrayKeyExists and is_bool($firstArray[$key])) {
+            $firstArray[$key] = var_export($firstArray[$key], true);
         }
 
-        if ($secondFileKeyExists) {
-            $secondFileContents[$key] = var_export($secondFileContents[$key], true);
+        if ($secondArrayKeyExists and is_bool($secondArray[$key])) {
+            $secondArray[$key] = var_export($secondArray[$key], true);
         }
 
         switch (true) {
-            case $firstFileKeyExists and $secondFileKeyExists:
-                if ($firstFileContents[$key] === $secondFileContents[$key]) {
-                    $result .= "    {$key}: {$firstFileContents[$key]}\n";
+            case $firstArrayKeyExists and $secondArrayKeyExists:
+                if ($firstArray[$key] === $secondArray[$key]) {
+                    $accumDifference .= "    {$key}: {$firstArray[$key]}\n";
                 } else {
-                    $result .= "  - {$key}: {$firstFileContents[$key]}\n";
-                    $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+                    $accumDifference .= "  - {$key}: {$firstArray[$key]}\n";
+                    $accumDifference .= "  + {$key}: {$secondArray[$key]}\n";
                 }
                 break;
-            case $firstFileKeyExists and !$secondFileKeyExists:
-                $result .= "  - {$key}: {$firstFileContents[$key]}\n";
+            case $firstArrayKeyExists and !$secondArrayKeyExists:
+                $accumDifference .= "  - {$key}: {$firstArray[$key]}\n";
                 break;
-            case !$firstFileKeyExists and $secondFileKeyExists:
-                $result .= "  + {$key}: {$secondFileContents[$key]}\n";
+            case !$firstArrayKeyExists and $secondArrayKeyExists:
+                $accumDifference .= "  + {$key}: {$secondArray[$key]}\n";
                 break;
             default:
                 exit('Error: Key is not exists!');
         }
     }
-    return "{\n{$result}}\n";
+    return $accumDifference;
 }
