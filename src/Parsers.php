@@ -9,9 +9,9 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @param string $path path to JSON-file
  *
- * @return array<string> associative array
+ * @return object
  */
-function getFileContents(string $path): array
+function getFileContents(string $path): object
 {
     $content = (string) file_get_contents($path);
     $extention = pathinfo($path)['extension'];
@@ -21,5 +21,14 @@ function getFileContents(string $path): array
         $content = json_encode($object);
     }
 
-    return json_decode($content, true);
+    return json_decode($content, false);
+}
+/**
+ * @param object $structure
+ *
+ * @return array<string>
+ */
+function getKeysOfStructure(object $structure): array
+{
+    return array_keys(json_decode(json_encode($structure), true));
 }

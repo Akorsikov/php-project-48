@@ -3,6 +3,7 @@
 namespace Php\Project\Diff;
 
 use function Php\Project\Parsers\getFileContents;
+use function Php\Project\Parsers\getKeysOfStructure;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -18,87 +19,100 @@ function genDiff(string $pathFirst, string $pathSecond): string
     if (!is_readable($pathFirst) or !is_readable($pathSecond)) {
         exit("Error: The file(s) do not exist or are unreadable\n");
     }
-
     $firstFileContents = getFileContents($pathFirst);
     $secondFileContents = getFileContents($pathSecond);
-    $result = getDifference($firstFileContents, $secondFileContents, '');
+    $differences = getDifference($firstFileContents, $secondFileContents, []);
 
-    // $firstFileKeys = array_keys($firstFileContents);
-    // $secondFileKeys = array_keys($secondFileContents);
-    // $listAllKeys = array_unique(array_merge($firstFileKeys, $secondFileKeys));
-    // sort($listAllKeys, SORT_STRING);
-
-    // foreach ($listAllKeys as $key) {
-    //     $firstFileKeyExists = array_key_exists($key, $firstFileContents);
-    //     $secondFileKeyExists = array_key_exists($key, $secondFileContents);
-
-    //     if ($firstFileKeyExists) {
-    //         $firstFileContents[$key] = var_export($firstFileContents[$key], true);
-    //     }
-
-    //     if ($secondFileKeyExists) {
-    //         $secondFileContents[$key] = var_export($secondFileContents[$key], true);
-    //     }
-
-    //     switch (true) {
-    //         case $firstFileKeyExists and $secondFileKeyExists:
-    //             if ($firstFileContents[$key] === $secondFileContents[$key]) {
-    //                 $result .= "    {$key}: {$firstFileContents[$key]}\n";
-    //             } else {
-    //                 $result .= "  - {$key}: {$firstFileContents[$key]}\n";
-    //                 $result .= "  + {$key}: {$secondFileContents[$key]}\n";
-    //             }
-    //             break;
-    //         case $firstFileKeyExists and !$secondFileKeyExists:
-    //             $result .= "  - {$key}: {$firstFileContents[$key]}\n";
-    //             break;
-    //         case !$firstFileKeyExists and $secondFileKeyExists:
-    //             $result .= "  + {$key}: {$secondFileContents[$key]}\n";
-    //             break;
-    //         default:
-    //             exit('Error: Key is not exists!');
-    //     }
-    // }
-    return "{\n{$result}}\n";
+    return getFormat($differences);
 }
 
-function getDifference(array $firstArray, array $secondArray, string $accumDifference): string
+/**
+ * Function compares two files (JSON or YML|YAML) and creates an array of differences for further formatting
+ *
+ * @param object $firstStructure original object, before changes
+ * @param object $secondStructure final object, after changes
+ * @param array<string> $accumDifferences
+ *
+ * @return array<mixed> array like this:
+ * [
+ *  'name'  => '<name of object's property>',
+ *  'value' => '<value of object's property>',
+ *  'type'  => 'unchanged | deleted | added'
+ * ]
+ */
+function getDifference(object $firstStructure, object $secondStructure, array $accumDifferences): array
 {
-    $firstListKeys = array_keys($firstArray);
-    $secondListKeys = array_keys($secondArray);
-    $listAllKeys = array_unique(array_merge($firstListKeys, $secondListKeys));
+    $firstStructureKeys = getKeysOfStructure($firstStructure);
+    $secondStructureKeys = getKeysOfStructure($secondStructure);
+    $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
     sort($listAllKeys, SORT_STRING);
 
     foreach ($listAllKeys as $key) {
-        $firstArrayKeyExists = array_key_exists($key, $firstArray);
-        $secondArrayKeyExists = array_key_exists($key, $secondArray);
-
-        if ($firstArrayKeyExists and is_bool($firstArray[$key])) {
-            $firstArray[$key] = var_export($firstArray[$key], true);
-        }
-
-        if ($secondArrayKeyExists and is_bool($secondArray[$key])) {
-            $secondArray[$key] = var_export($secondArray[$key], true);
-        }
+        $firstStructureKeyExists = property_exists($firstStructure, $key);
+        $secondStructureKeyExists = property_exists($secondStructure, $key);
+        $node = [];
 
         switch (true) {
-            case $firstArrayKeyExists and $secondArrayKeyExists:
-                if ($firstArray[$key] === $secondArray[$key]) {
-                    $accumDifference .= "    {$key}: {$firstArray[$key]}\n";
+            case $firstStructureKeyExists and $secondStructureKeyExists:
+                // if обе структуры объекты делаем рекурсивный вызов getDifference
+                if ($firstStructure -> $key === $secondStructure -> $key) {
+                    $accumDifferences[] = getNode($key, $firstStructure -> $key, 'unchanged');
                 } else {
-                    $accumDifference .= "  - {$key}: {$firstArray[$key]}\n";
-                    $accumDifference .= "  + {$key}: {$secondArray[$key]}\n";
+                    $accumDifferences[] = getNode($key, $firstStructure -> $key, 'deleted');
+                    $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
                 }
                 break;
-            case $firstArrayKeyExists and !$secondArrayKeyExists:
-                $accumDifference .= "  - {$key}: {$firstArray[$key]}\n";
+            case !$secondStructureKeyExists and $firstStructureKeyExists:
+                $accumDifferences[] = getNode($key, $firstStructure -> $key, 'deleted');
                 break;
-            case !$firstArrayKeyExists and $secondArrayKeyExists:
-                $accumDifference .= "  + {$key}: {$secondArray[$key]}\n";
+            case !$firstStructureKeyExists and $secondStructureKeyExists:
+                $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
                 break;
             default:
                 exit('Error: Key is not exists!');
         }
     }
-    return $accumDifference;
+
+    return $accumDifferences;
+}
+
+/**
+ * @param string $name
+ * @param string $value
+ * @param string $type
+ *
+ * @return array<string>
+ */
+function getNode(string $name, mixed $value, string $type): array
+{
+    $node['name'] = $name;
+    // ask mentor, phpstan: is_bool always will false
+    $node['value'] = (is_bool($value)) ? var_export($value, true) : $value;
+    $node['type'] = $type;
+
+    return $node;
+}
+/**
+ * @param array<mixed> $associativeArray
+ *
+ * @return string
+ */
+function getFormat(array $associativeArray): string
+{
+    $result = array_reduce(
+        $associativeArray,
+        function ($carry, $item) {
+            $prefix = match ((string) $item['type']) {
+                'unchanged' => ' ', // delete ? ask mentor
+                'deleted' => '-',
+                'added' => '+',
+                default => ' '
+            };
+            $carry .= "  {$prefix} {$item['name']}: {$item['value']}\n";
+            return $carry;
+        },
+        ''
+    );
+
+    return "{\n{$result}}\n";
 }
