@@ -95,14 +95,19 @@ function getNode(string $name, mixed $value, string $type): array
     return $node;
 }
 /**
+ * Function formate differences two files on basic array of nodes,
+ * for added string move prefix '+',
+ * for deleted string - prefix '-',
+ * for unchanged string - prefix ' '.
+ *
  * @param array<mixed> $associativeArray
  *
- * @return string
+ * @return string return formating string
  */
-function getFormat(array $associativeArray): string
+function getFormat(array $nodes): string
 {
     $result = array_reduce(
-        $associativeArray,
+        $nodes,
         function ($carry, $item) {
             $prefix = match ((string) $item['type']) {
                 'unchanged' => ' ', // delete ? ask mentor
