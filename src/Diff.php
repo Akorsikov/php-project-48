@@ -77,11 +77,13 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
 }
 
 /**
- * @param string $name
- * @param string $value
- * @param string $type
+ * Function create node with name, value and type
  *
- * @return array<string>
+ * @param string $name name node
+ * @param string $value value node
+ * @param string $type type node may be 'unchanged' | 'deleted' | 'added'
+ *
+ * @return array<string> return node
  */
 function getNode(string $name, mixed $value, string $type): array
 {
