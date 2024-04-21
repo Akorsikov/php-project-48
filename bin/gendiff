@@ -28,14 +28,18 @@ Options:
 DOC;
 
 $args = Docopt::handle($doc, array('version' => 'gendiff 0.1'));
-// var_dump($args);
+
 $diff = genDiff($args['<firstFile>'], $args['<secondFile>']);
 $formater = $args['--format'];
 
 //$formatedDiff = $formater($diff); // такой вызов не сработал
 
+// Add in switch other formate functions
 switch ($formater) {
   case 'stylish': $formatedDiff = stylish($diff);
+    break;
+  //case '<formate function>': $formatedDiff = <formate function>($diff);
+  //  break;
 }
 
 echo ($formatedDiff);
