@@ -4,7 +4,6 @@ namespace Php\Project\Diff;
 
 use function Php\Project\Parsers\getFileContents;
 use function Php\Project\Parsers\getKeysOfStructure;
-use function Php\Project\Stylish\getFormat;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -13,9 +12,9 @@ use function Php\Project\Stylish\getFormat;
  * @param string $pathFirst  path to first file
  * @param string $pathSecond path to second file
  *
- * @return string file differences in relation to each other
+ * @return array<string> file differences in relation to each other
  */
-function genDiff(string $pathFirst, string $pathSecond): string
+function genDiff(string $pathFirst, string $pathSecond): array
 {
     if (!is_readable($pathFirst) or !is_readable($pathSecond)) {
         exit("Error: The file(s) do not exist or are unreadable\n");
@@ -24,7 +23,7 @@ function genDiff(string $pathFirst, string $pathSecond): string
     $secondFileContents = getFileContents($pathSecond);
     $differences = getDifference($firstFileContents, $secondFileContents, []);
 
-    return getFormat($differences, 1);
+    return $differences;
 }
 
 /**

@@ -10,6 +10,7 @@ if (file_exists($autoloadPathGlobal)) {
 }
 
 use function Php\Project\Diff\genDiff;
+use function Php\Project\Stylish\stylish;
 
 $doc = <<<DOC
 
@@ -27,6 +28,14 @@ Options:
 DOC;
 
 $args = Docopt::handle($doc, array('version' => 'gendiff 0.1'));
+// var_dump($args);
 $diff = genDiff($args['<firstFile>'], $args['<secondFile>']);
+$formater = $args['--format'];
 
-echo($diff);
+//$formatedDiff = $formater($diff); // такой вызов не сработал
+
+switch ($formater) {
+  case 'stylish': $formatedDiff = stylish($diff);
+}
+
+echo ($formatedDiff);

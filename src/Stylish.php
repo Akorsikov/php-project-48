@@ -13,12 +13,12 @@ namespace Php\Project\Stylish;
  *
  * @return string return formating string
  */
-function getFormat(array $nodes, int $level = 1): string
+function stylish(array $nodes, int $level = 1): string
 {
     $result = '';
     foreach ($nodes as $item) {
         if (array_key_exists('children', $item)) {
-            $value = getFormat($item['children'], $level + 1);
+            $value = stylish($item['children'], $level + 1);
         } elseif (array_key_exists('value', $item)) {
             if (is_array($item['value'])) {
                 $value = getFormatArray($item['value'], $level + 1);
@@ -80,14 +80,14 @@ function getFormatArray(array $array, $level): string
  * the presence of the flag $isBrackets
  *
  * @param int  $level nesting depth
- * @param bool $isBrackets decreases the left indent by two characters for clousere brackets
+ * @param bool $forBrackets decreases the left indent by two characters for clousere brackets
  *
  * @return string margin the left from spaces for differences and brackets
  */
-function getMargin(int $level, bool $isBrackets = false): string
+function getMargin(int $level, bool $forBrackets = false): string
 {
     $numberSpacePerLevel = 4;
-    $marginToLeft = $isBrackets ? 4 : 2;
+    $marginToLeft = $forBrackets ? 4 : 2;
     $margin = $level * $numberSpacePerLevel - $marginToLeft;
     return str_repeat(' ', $margin);
 }
