@@ -25,8 +25,6 @@ function stylish(array $nodes, int $level = 1): string
             } else {
                 $value = $item['value'];
             }
-        } else {
-            var_dump('ITem: ', $item);
         }
         $prefix = match ($item['type']) {
             'unchanged' => ' ',
@@ -70,8 +68,8 @@ function getFormatArray(array $array, $level): string
             "  {$margin}{$key}: {$array[$key]}\n";
         }
     }
-    // $margin = substr($margin, 2);
     $margin = getMargin($level, true);
+
     return "{\n{$string}{$margin}}";
 }
 
