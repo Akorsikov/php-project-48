@@ -58,15 +58,13 @@ function getFormatArray(array $array, $level): string
         if (is_array($array[$key])) {
             $value = getFormatArray($array[$key], $level + 1);
             $margin = getMargin($level);
-            $string .= empty($value) ?
-            "  {$margin}{$key}:\n" :
-            "  {$margin}{$key}: {$value}\n";
         } else {
+            $value = $array[$key];
             $margin = getMargin($level);
-            $string .= empty($array[$key]) ?
-            "  {$margin}{$key}:\n" :
-            "  {$margin}{$key}: {$array[$key]}\n";
         }
+        $string .= empty($value) ?
+        "{$margin}  {$key}:\n" :
+        "{$margin}  {$key}: {$value}\n";
     }
     $margin = getMargin($level, true);
 
