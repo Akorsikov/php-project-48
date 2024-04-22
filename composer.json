@@ -11,7 +11,7 @@
             "./vendor/docopt/docopt/src/docopt.php",
             "./src/Diff.php",
             "./src/Parsers.php",
-            "./src/Stylish.php"
+            "./src/Formaters/Stylish.php"
         ]
     },
     "authors": [

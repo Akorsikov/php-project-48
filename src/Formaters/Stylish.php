@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\Project\Stylish;
+namespace Php\Project\Formaters\Stylish;
 
 /**
  * Function formate differences two files on base array of nodes,
@@ -72,8 +72,9 @@ function getFormatArray(array $array, $level): string
 }
 
 /**
- * function returns indentation depending on the nesting depth and
- * the presence of the flag $isBrackets
+ * 
+ * Function returns indentation depending on the nesting depth and
+ * the presence of the flag $forBrackets
  *
  * @param int  $level nesting depth
  * @param bool $forBrackets decreases the left indent by two characters for clousere brackets
