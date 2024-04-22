@@ -10,7 +10,7 @@ if (file_exists($autoloadPathGlobal)) {
 }
 
 use function Php\Project\Diff\genDiff;
-use function Php\Project\Formaters\Stylish\stylish;
+use function Php\Project\Formatters\Stylish\stylish;
 
 $doc = <<<DOC
 

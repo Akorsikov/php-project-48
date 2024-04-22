@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\Project\Formaters\Stylish;
+namespace Php\Project\Formatters\Stylish;
 
 /**
  * Function formate differences two files on base array of nodes,
