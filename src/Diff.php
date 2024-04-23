@@ -2,8 +2,10 @@
 
 namespace Php\Project\Diff;
 
+use function Php\Project\Formaters\Plain\plain;
 use function Php\Project\Parsers\getFileContents;
 use function Php\Project\Parsers\getKeysOfStructure;
+use function Php\Project\Formatters\Stylish\stylish;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -11,10 +13,11 @@ use function Php\Project\Parsers\getKeysOfStructure;
  *
  * @param string $pathFirst  path to first file
  * @param string $pathSecond path to second file
+ * @param string $formatter style formating
  *
- * @return array<string> file differences in relation to each other
+ * @return string file differences in relation to each other
  */
-function genDiff(string $pathFirst, string $pathSecond): array
+function genDiff(string $pathFirst, string $pathSecond, string $formatter): string
 {
     if (!is_readable($pathFirst) or !is_readable($pathSecond)) {
         exit("Error: The file(s) do not exist or are unreadable\n");
@@ -23,7 +26,15 @@ function genDiff(string $pathFirst, string $pathSecond): array
     $secondFileContents = getFileContents($pathSecond);
     $differences = getDifference($firstFileContents, $secondFileContents, []);
 
-    return $differences;
+    switch ($formatter) {
+        case 'stylish': $outputDiff = stylish($differences, 1);
+            break;
+        case 'plain'  : $outputDiff = plain($differences);
+            break;
+        default : exit('Error: There is no such formatter!');
+    }
+
+    return $outputDiff;
 }
 
 /**
