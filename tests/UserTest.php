@@ -53,4 +53,14 @@ public function testGenDiffYalmFiles(): void
 
         $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
     }
+
+    public function testGenDiffPlain(): void
+    {
+        $path1 = './tests/fixtures/file1.json';
+        $path2 = './tests/fixtures/file2.json';
+        $fileDiff = './tests/fixtures/plain-diff.txt';
+
+        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'plain'));
+    }
+
 }
