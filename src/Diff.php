@@ -25,13 +25,15 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter): stri
     $firstFileContents = getFileContents($pathFirst);
     $secondFileContents = getFileContents($pathSecond);
     $differences = getDifference($firstFileContents, $secondFileContents, []);
-
     switch ($formatter) {
-        case 'stylish': $outputDiff = stylish($differences, 1);
+        case 'stylish':
+            $outputDiff = stylish($differences, 1);
             break;
-        case 'plain'  : $outputDiff = plain($differences);
+        case 'plain':
+            $outputDiff = plain($differences);
             break;
-        default : exit('Error: There is no such formatter!');
+        default:
+            exit('Error: There is no such formatter!');
     }
 
     return $outputDiff;

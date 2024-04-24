@@ -72,7 +72,7 @@ function getFormatArray(array $array, $level): string
 }
 
 /**
- * 
+ *
  * Function returns indentation depending on the nesting depth and
  * the presence of the flag $forBrackets
  *
