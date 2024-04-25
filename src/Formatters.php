@@ -21,6 +21,8 @@ function choceFormatter(array $differences, string $nameFormatter): string
             return stylish($differences, 1);
         case 'plain':
             return plain($differences);
+        case 'json':
+            return (string) json_encode($differences);
         // add more formatters
         // case '<other formatter>':
         //     return <other formatter>($differences);
