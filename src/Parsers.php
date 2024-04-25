@@ -14,21 +14,21 @@ use Symfony\Component\Yaml\Yaml;
 function getFileContents(string $path): object
 {
     $content = (string) file_get_contents($path);
-    $extention = pathinfo($path)['extension'];
+    $extention = pathinfo($path, PATHINFO_EXTENSION);
 
     if ($extention === 'yml' or $extention === 'yaml') {
         $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
         $content = json_encode($object);
     }
 
-    return json_decode($content, false);
+    return json_decode((string) $content, false);
 }
 /**
  * @param object $structure
  *
- * @return array<string>
+ * @return array<int, int|string>
  */
 function getKeysOfStructure(object $structure): array
 {
-    return array_keys(json_decode(json_encode($structure), true));
+    return array_keys(json_decode((string) json_encode($structure), true));
 }

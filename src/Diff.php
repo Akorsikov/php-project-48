@@ -2,10 +2,9 @@
 
 namespace Php\Project\Diff;
 
-use function Php\Project\Formaters\Plain\plain;
 use function Php\Project\Parsers\getFileContents;
 use function Php\Project\Parsers\getKeysOfStructure;
-use function Php\Project\Formatters\Stylish\stylish;
+use function Php\Project\Formaters\choceFormatter;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -25,18 +24,8 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter): stri
     $firstFileContents = getFileContents($pathFirst);
     $secondFileContents = getFileContents($pathSecond);
     $differences = getDifference($firstFileContents, $secondFileContents, []);
-    switch ($formatter) {
-        case 'stylish':
-            $outputDiff = stylish($differences, 1);
-            break;
-        case 'plain':
-            $outputDiff = plain($differences);
-            break;
-        default:
-            exit('Error: There is no such formatter!');
-    }
 
-    return $outputDiff;
+    return choceFormatter($differences, $formatter);
 }
 
 /**
@@ -58,14 +47,11 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
     $firstStructureKeys = getKeysOfStructure($firstStructure);
     $secondStructureKeys = getKeysOfStructure($secondStructure);
     $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
-
     sort($listAllKeys, SORT_STRING);
 
-
     foreach ($listAllKeys as $key) {
-        $firstStructureKeyExists = property_exists($firstStructure, $key);
-        $secondStructureKeyExists = property_exists($secondStructure, $key);
-
+        $firstStructureKeyExists = property_exists($firstStructure, (string) $key);
+        $secondStructureKeyExists = property_exists($secondStructure, (string) $key);
 
         switch (true) {
             case $firstStructureKeyExists and $secondStructureKeyExists:
@@ -103,14 +89,14 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
  *
  * @return array<string> return node
  */
-function getNode(string $name, mixed $value, string $type): array
+function getNode(int|string $name, mixed $value, string $type): array
 {
     $node['name'] = $name;
     $node['type'] = $type;
     if (is_array($value)) {
-        $node['children'] = json_decode(json_encode($value), true);
+        $node['children'] = json_decode((string) json_encode($value), true);
     } elseif (is_object($value)) {
-        $node['value'] = json_decode(json_encode($value), true);
+        $node['value'] = json_decode((string) json_encode($value), true);
     } else {
         // ask mentor, phpstan: is_bool always will false
         $node['value'] = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
