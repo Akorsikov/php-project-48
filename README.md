@@ -13,4 +13,8 @@
 - Make
 - Git
 
-[Demonstration Run & Test] https://asciinema.org/a/BvJc19bna7sTw1zyvLr2bCzDR
+[Demonstration Run (default) & Test](https://asciinema.org/a/BvJc19bna7sTw1zyvLr2bCzDR)
+
+[Demonstration Run (stylish) & Test](https://asciinema.org/a/AXReEKCiTCFb87x1OaSiLENvB)
+
+[Demonstration Run (plain) & Test](https://asciinema.org/a/nR1E8tqHoHgIQi01RRfptaQOV)
