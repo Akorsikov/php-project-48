@@ -18,3 +18,5 @@
 [Demonstration Run (stylish) & Test](https://asciinema.org/a/AXReEKCiTCFb87x1OaSiLENvB)
 
 [Demonstration Run (plain) & Test](https://asciinema.org/a/nR1E8tqHoHgIQi01RRfptaQOV)
+
+[Demonstration Run (json) & Test](https://asciinema.org/a/im76F3uwqTnizTF2HJM5DDzOL)
