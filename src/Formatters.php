@@ -22,7 +22,7 @@ function choceFormatter(array $differences, string $nameFormatter): string
         case 'plain':
             return plain($differences);
         case 'json':
-            return (string) json_encode($differences);
+            return (string) json_encode($differences) . "\n";
         // add more formatters
         // case '<other formatter>':
         //     return <other formatter>($differences);
