@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\Project\Formatters\Stylish;
+namespace Differ\Formatters\Stylish;
 
 /**
  * Function formate differences two files on base array of nodes,
@@ -46,7 +46,7 @@ function stylish(array $nodes, int $level = 1): string
  * Function formats nested arrays
  *
  * @param array<mixed> $array nested array
- * @param int   $level level nested
+ * @param int $level level nested
  *
  * @return string return formating string
  */
@@ -86,5 +86,6 @@ function getMargin(int $level, bool $forBrackets = false): string
     $numberSpacePerLevel = 4;
     $marginToLeft = $forBrackets ? 4 : 2;
     $margin = $level * $numberSpacePerLevel - $marginToLeft;
+
     return str_repeat(' ', $margin);
 }

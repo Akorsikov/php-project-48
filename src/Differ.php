@@ -1,10 +1,10 @@
 <?php
 
-namespace Php\Project\Diff;
+namespace Differ\Differ;
 
-use function Php\Project\Parsers\getFileContents;
-use function Php\Project\Parsers\getKeysOfStructure;
-use function Php\Project\Formaters\choceFormatter;
+use function Differ\Parsers\getFileContents;
+use function Differ\Parsers\getKeysOfStructure;
+use function Differ\Formaters\choceFormatter;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -98,7 +98,6 @@ function getNode(int|string $name, mixed $value, string $type): array
     } elseif (is_object($value)) {
         $node['value'] = json_decode((string) json_encode($value), true);
     } else {
-        // ask mentor, phpstan: is_bool always will false
         $node['value'] = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
     }
 

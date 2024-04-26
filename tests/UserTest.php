@@ -1,12 +1,11 @@
 <?php
 
-namespace Php\Project\Tests;
+namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Php\Project\Diff;
 
-use function Php\Project\Diff\genDiff;
-use function Php\Project\Formatters\Stylish\stylish;
+use function Differ\Differ\genDiff;
+use function Differ\Formatters\Stylish\stylish;
 
 class UserTest extends TestCase
 {

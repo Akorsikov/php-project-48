@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\Project\Parsers;
+namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -17,16 +17,20 @@ function getFileContents(string $path): object
     $extention = pathinfo($path, PATHINFO_EXTENSION);
 
     if ($extention === 'yml' or $extention === 'yaml') {
+    // или лучше: if (in_array($extention, ['yml', 'yaml'], true)) {
         $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
         $content = json_encode($object);
     }
 
     return json_decode((string) $content, false);
 }
+
 /**
- * @param object $structure
+ * Function returned all keys of structure such object
  *
- * @return array<int, int|string>
+ * @param object $structure object
+ *
+ * @return array<int, int|string> all keys of object
  */
 function getKeysOfStructure(object $structure): array
 {

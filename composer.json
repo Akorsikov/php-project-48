@@ -9,7 +9,7 @@
         },
         "files": [
             "./vendor/docopt/docopt/src/docopt.php",
-            "./src/Diff.php",
+            "./src/Differ.php",
             "./src/Parsers.php",
             "./src/Formatters.php",
             "./src/Formatters/Stylish.php",

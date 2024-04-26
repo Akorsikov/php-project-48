@@ -1,9 +1,9 @@
 <?php
 
-namespace Php\Project\Formaters;
+namespace Differ\Formaters;
 
-use function Php\Project\Formaters\Plain\plain;
-use function Php\Project\Formatters\Stylish\stylish;
+use function Differ\Formaters\Plain\plain;
+use function Differ\Formatters\Stylish\stylish;
 
 /**
  * Function formats the difference array of two files
@@ -18,7 +18,7 @@ function choceFormatter(array $differences, string $nameFormatter): string
 {
     switch ($nameFormatter) {
         case 'stylish':
-            return stylish($differences, 1);
+            return stylish($differences) . "\n";
         case 'plain':
             return plain($differences);
         case 'json':

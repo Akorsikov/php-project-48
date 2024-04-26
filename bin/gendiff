@@ -9,7 +9,7 @@ if (file_exists($autoloadPathGlobal)) {
     require_once $autoloadPathLocal;
 }
 
-use function Php\Project\Diff\genDiff;
+use function Differ\Differ\genDiff;
 
 $doc = <<<DOC
 
