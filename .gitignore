@@ -1,0 +1,5 @@
+/vendor/
+.vscode
+/coverage/
+/temp/
+/.phpunit.cache/
