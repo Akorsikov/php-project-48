@@ -18,7 +18,7 @@ use function Differ\Formaters\choceFormatter;
  *
  * @return string file differences in relation to each other
  */
-function genDiff(string $pathFirst, string $pathSecond, string $formatter): string
+function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'stylish'): string
 {
     try {
         $firstFileContents = getFileContents($pathFirst);
