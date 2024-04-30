@@ -20,7 +20,6 @@ use function Differ\Formaters\choceFormatter;
  */
 function genDiff(string $pathFirst, string $pathSecond, string $formatter): string
 {
-    // $outputDiff = '';
     try {
         $firstFileContents = getFileContents($pathFirst);
         $secondFileContents = getFileContents($pathSecond);
@@ -62,7 +61,6 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
             case $firstStructureKeyExists and $secondStructureKeyExists:
                 if (is_object($firstStructure -> $key) and is_object($secondStructure -> $key)) {
                     $nestedSructure = getDifference($firstStructure -> $key, $secondStructure -> $key, []);
-                    // var_dump('Nested structure: ', $nestedSructure);
                     $accumDifferences[] = getNode($key, $nestedSructure, 'unchanged');
                 } elseif ($firstStructure -> $key === $secondStructure -> $key) {
                         $accumDifferences[] = getNode($key, $firstStructure -> $key, 'unchanged');

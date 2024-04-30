@@ -22,7 +22,6 @@ function getFileContents(string $filepath): object
     $extention = pathinfo($filepath, PATHINFO_EXTENSION);
 
     if ($extention === 'yml' or $extention === 'yaml') {
-    // или лучше: if (in_array($extention, ['yml', 'yaml'], true)) {
         $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
         $content = json_encode($object);
     }
