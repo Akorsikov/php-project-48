@@ -4,8 +4,8 @@ namespace Differ\Differ;
 
 use Exception;
 
-use function Differ\Parsers\getFileContents;
-use function Differ\Parsers\getKeysOfStructure;
+use function Differ\Helpers\getFileContents;
+use function Differ\Helpers\getKeysOfStructure;
 use function Differ\Formaters\choceFormatter;
 
 /**

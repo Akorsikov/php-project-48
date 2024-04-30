@@ -5,38 +5,21 @@ namespace Differ\Parsers;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Function receives the JSON or YML/YAML file content and decodes it into an associative array
+ * Function converts json or yaml/yml file contents into an object
  *
- * @param string $filepath path to JSON-file
+ * @param string $fileContent content of file
+ * @param string $extention extention of file
  *
- * @return object
+ * @return object object with recursive structure
  */
-function getFileContents(string $filepath): object
+function parser(string $fileContent, string $extention): object
 {
-
-    if (!is_readable($filepath)) {
-        throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!\n");
-    }
-
-    $content = (string) file_get_contents($filepath);
-    $extention = pathinfo($filepath, PATHINFO_EXTENSION);
-
     if ($extention === 'yml' or $extention === 'yaml') {
-        $object = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
-        $content = json_encode($object);
+        $object = Yaml::parse($fileContent, Yaml::PARSE_OBJECT_FOR_MAP);
+        $parceContent = json_encode($object);
+    } else {
+        $parceContent = $fileContent;
     }
 
-    return json_decode((string) $content, false);
-}
-
-/**
- * Function returned all keys of structure such object
- *
- * @param object $structure object
- *
- * @return array<int, int|string> all keys of object
- */
-function getKeysOfStructure(object $structure): array
-{
-    return array_keys(json_decode((string) json_encode($structure), true));
+    return json_decode((string) $parceContent, false);
 }
