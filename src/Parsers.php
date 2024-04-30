@@ -7,14 +7,19 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Function receives the JSON or YML/YAML file content and decodes it into an associative array
  *
- * @param string $path path to JSON-file
+ * @param string $filepath path to JSON-file
  *
  * @return object
  */
-function getFileContents(string $path): object
+function getFileContents(string $filepath): object
 {
-    $content = (string) file_get_contents($path);
-    $extention = pathinfo($path, PATHINFO_EXTENSION);
+
+    if (!is_readable($filepath)) {
+        throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!\n");
+    }
+
+    $content = (string) file_get_contents($filepath);
+    $extention = pathinfo($filepath, PATHINFO_EXTENSION);
 
     if ($extention === 'yml' or $extention === 'yaml') {
     // или лучше: if (in_array($extention, ['yml', 'yaml'], true)) {

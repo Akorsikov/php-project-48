@@ -27,6 +27,6 @@ function choceFormatter(array $differences, string $nameFormatter): string
         // case '<other formatter>':
         //     return <other formatter>($differences);
         default:
-            exit("Error: There is no such formatter!\n");
+            throw new \Exception("Error: There is no such '{$nameFormatter}' formatter!\n");
     }
 }

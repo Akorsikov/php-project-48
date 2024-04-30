@@ -2,6 +2,8 @@
 
 namespace Differ\Differ;
 
+use Exception;
+
 use function Differ\Parsers\getFileContents;
 use function Differ\Parsers\getKeysOfStructure;
 use function Differ\Formaters\choceFormatter;
@@ -18,14 +20,17 @@ use function Differ\Formaters\choceFormatter;
  */
 function genDiff(string $pathFirst, string $pathSecond, string $formatter): string
 {
-    if (!is_readable($pathFirst) or !is_readable($pathSecond)) {
-        exit("Error: The file(s) do not exist or are unreadable\n");
+    // $outputDiff = '';
+    try {
+        $firstFileContents = getFileContents($pathFirst);
+        $secondFileContents = getFileContents($pathSecond);
+        $differences = getDifference($firstFileContents, $secondFileContents, []);
+        $outputDiff = choceFormatter($differences, $formatter);
+    } catch (\Exception $exception) {
+        echo ($exception);
+        $outputDiff = "\n";
     }
-    $firstFileContents = getFileContents($pathFirst);
-    $secondFileContents = getFileContents($pathSecond);
-    $differences = getDifference($firstFileContents, $secondFileContents, []);
-
-    return choceFormatter($differences, $formatter);
+    return $outputDiff;
 }
 
 /**
@@ -69,11 +74,8 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
             case !$secondStructureKeyExists and $firstStructureKeyExists:
                 $accumDifferences[] = getNode($key, $firstStructure -> $key, 'deleted');
                 break;
-            case !$firstStructureKeyExists and $secondStructureKeyExists:
-                $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
-                break;
             default:
-                exit('Error: Key is not exists!');
+                $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
         }
     }
 
