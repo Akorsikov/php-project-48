@@ -4,6 +4,7 @@ namespace Differ\Formaters;
 
 use function Differ\Formaters\Plain\plain;
 use function Differ\Formatters\Stylish\stylish;
+use function Differ\Formatters\Json\Formater\jsonFormatter;
 
 /**
  * Function formats the difference array of two files
@@ -22,7 +23,7 @@ function choceFormatter(array $differences, string $nameFormatter): string
         case 'plain':
             return plain($differences);
         case 'json':
-            return (string) json_encode($differences) . "\n";
+            return jsonFormatter($differences) . "\n";
         // add more formatters
         // case '<other formatter>':
         //     return <other formatter>($differences);
