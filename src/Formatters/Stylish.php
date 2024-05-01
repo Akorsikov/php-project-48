@@ -33,9 +33,9 @@ function stylish(array $nodes, int $level = 1): string
             default => ' '
         };
         $margin = getMargin($level);
-        $result .= empty($value) ?
-            "{$margin}{$prefix} {$item['name']}:\n" :
-            "{$margin}{$prefix} {$item['name']}: {$value}\n";
+        $result .= isset($value) ?
+            "{$margin}{$prefix} {$item['name']}: {$value}\n" :
+            "{$margin}{$prefix} {$item['name']}:\n";
     }
     $margin = getMargin($level, true);
 
@@ -62,9 +62,9 @@ function getFormatArray(array $array, $level): string
             $value = $array[$key];
             $margin = getMargin($level);
         }
-        $string .= empty($value) ?
-        "{$margin}  {$key}:\n" :
-        "{$margin}  {$key}: {$value}\n";
+        $string .= isset($value) ?
+        "{$margin}  {$key}: {$value}\n" :
+        "{$margin}  {$key}:\n";
     }
     $margin = getMargin($level, true);
 
