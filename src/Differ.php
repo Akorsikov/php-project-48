@@ -23,7 +23,7 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
     try {
         $firstFileContents = getFileContents($pathFirst);
         $secondFileContents = getFileContents($pathSecond);
-        $differences = getDifference($firstFileContents, $secondFileContents, []);
+        $differences = getDifference($firstFileContents, $secondFileContents);
         $outputDiff = choceFormatter($differences, $formatter);
     } catch (\Exception $exception) {
         echo ($exception);
@@ -37,7 +37,6 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
  *
  * @param object $firstStructure original object, before changes
  * @param object $secondStructure final object, after changes
- * @param array<string> $accumDifferences
  *
  * @return array<mixed> array like this:
  * [
@@ -46,7 +45,7 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
  *  'type'  => 'unchanged | deleted | added'
  * ]
  */
-function getDifference(object $firstStructure, object $secondStructure, array $accumDifferences): array
+function getDifference(object $firstStructure, object $secondStructure): array
 {
     $firstStructureKeys = getKeysOfStructure($firstStructure);
     $secondStructureKeys = getKeysOfStructure($secondStructure);
@@ -62,7 +61,7 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
             switch (true) {
                 case $firstStructureKeyExists and $secondStructureKeyExists:
                     if (is_object($firstStructure -> $item) and is_object($secondStructure -> $item)) {
-                        $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item, []);
+                        $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
 
                         return array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
                     } elseif ($firstStructure -> $item === $secondStructure -> $item) {
