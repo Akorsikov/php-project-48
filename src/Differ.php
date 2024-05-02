@@ -63,21 +63,23 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
                 case $firstStructureKeyExists and $secondStructureKeyExists:
                     if (is_object($firstStructure -> $item) and is_object($secondStructure -> $item)) {
                         $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item, []);
-                        $carry[] = getNode($item, $nestedSructure, 'unchanged');
+
+                        return array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
                     } elseif ($firstStructure -> $item === $secondStructure -> $item) {
-                            $carry[] = getNode($item, $firstStructure -> $item, 'unchanged');
+                        return array_merge($carry, [getNode($item, $firstStructure -> $item, 'unchanged')]);
                     } else {
-                        $carry[] = getNode($item, $firstStructure -> $item, 'deleted');
-                        $carry[] = getNode($item, $secondStructure -> $item, 'added');
+                        return array_merge(
+                            $carry,
+                            [getNode($item, $firstStructure -> $item, 'deleted')],
+                            [getNode($item, $secondStructure -> $item, 'added')]
+                        );
                     }
-                    break;
                 case !$secondStructureKeyExists and $firstStructureKeyExists:
-                    $carry[] = getNode($item, $firstStructure -> $item, 'deleted');
-                    break;
+                    return array_merge($carry, [getNode($item, $firstStructure -> $item, 'deleted')]);
+
                 default:
-                    $carry[] = getNode($item, $secondStructure -> $item, 'added');
+                    return array_merge($carry, [getNode($item, $secondStructure -> $item, 'added')]);
             }
-            return $carry;
         },
         []
     );
