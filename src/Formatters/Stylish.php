@@ -34,7 +34,7 @@ function stylish(array $nodes, int $level = 1): string
                 default => ' '
             };
             $margin = getMargin($level);
-            
+
             return $carry . (isset($value) ?
                 "{$margin}{$prefix} {$item['name']}: {$value}\n" :
                 "{$margin}{$prefix} {$item['name']}:\n");
