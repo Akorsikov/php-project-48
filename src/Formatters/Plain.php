@@ -64,13 +64,13 @@ function plain(array $nodes, string $path = ''): string
  *
  * @param mixed $value
  *
- * @return string
+ * @return float|int|string
  */
-function getNormalisedValue(mixed $value): string
+function getNormalisedValue(mixed $value): float|int|string
 {
     if (is_array($value)) {
         return '[complex value]';
-    } elseif (!in_array($value, ['true', 'false', 'null']) and !is_numeric($value)) {
+    } elseif (!in_array($value, ['true', 'false', 'null'], true) and !is_numeric($value)) {
         return "'{$value}'";
     } else {
         return $value;
