@@ -34,11 +34,10 @@ function stylish(array $nodes, int $level = 1): string
                 default => ' '
             };
             $margin = getMargin($level);
-            $newCarry = $carry . (isset($value) ?
+            
+            return $carry . (isset($value) ?
                 "{$margin}{$prefix} {$item['name']}: {$value}\n" :
                 "{$margin}{$prefix} {$item['name']}:\n");
-
-                return $newCarry;
         },
         ''
     );
@@ -68,11 +67,10 @@ function getFormatArray(array $array, $level): string
                 $value = $array[$item];
             }
             $margin = getMargin($level);
-            $newCarry = $carry . (isset($value) ?
+
+            return $carry . (isset($value) ?
                 "{$margin}  {$item}: {$value}\n" :
                 "{$margin}  {$item}:\n");
-
-            return $newCarry;
         },
         ''
     );
