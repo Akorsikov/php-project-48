@@ -100,6 +100,7 @@ function getNode(int|string $name, mixed $value, string $type): array
 {
     if (is_array($value)) {
         $children = json_decode((string) json_encode($value), true);
+        $newValue = '';
     } elseif (is_object($value)) {
         $newValue = json_decode((string) json_encode($value), true);
     } else {
