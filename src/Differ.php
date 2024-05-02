@@ -53,29 +53,34 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
     $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
     sort($listAllKeys, SORT_STRING);
 
-    foreach ($listAllKeys as $key) {
-        $firstStructureKeyExists = property_exists($firstStructure, (string) $key);
-        $secondStructureKeyExists = property_exists($secondStructure, (string) $key);
+    $accumDifferences = array_reduce(
+        $listAllKeys,
+        function ($carry, $item) use ($firstStructure, $secondStructure) {
+            $firstStructureKeyExists = property_exists($firstStructure, (string) $item);
+            $secondStructureKeyExists = property_exists($secondStructure, (string) $item);
 
-        switch (true) {
-            case $firstStructureKeyExists and $secondStructureKeyExists:
-                if (is_object($firstStructure -> $key) and is_object($secondStructure -> $key)) {
-                    $nestedSructure = getDifference($firstStructure -> $key, $secondStructure -> $key, []);
-                    $accumDifferences[] = getNode($key, $nestedSructure, 'unchanged');
-                } elseif ($firstStructure -> $key === $secondStructure -> $key) {
-                        $accumDifferences[] = getNode($key, $firstStructure -> $key, 'unchanged');
-                } else {
-                    $accumDifferences[] = getNode($key, $firstStructure -> $key, 'deleted');
-                    $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
-                }
-                break;
-            case !$secondStructureKeyExists and $firstStructureKeyExists:
-                $accumDifferences[] = getNode($key, $firstStructure -> $key, 'deleted');
-                break;
-            default:
-                $accumDifferences[] = getNode($key, $secondStructure -> $key, 'added');
-        }
-    }
+            switch (true) {
+                case $firstStructureKeyExists and $secondStructureKeyExists:
+                    if (is_object($firstStructure -> $item) and is_object($secondStructure -> $item)) {
+                        $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item, []);
+                        $carry[] = getNode($item, $nestedSructure, 'unchanged');
+                    } elseif ($firstStructure -> $item === $secondStructure -> $item) {
+                            $carry[] = getNode($item, $firstStructure -> $item, 'unchanged');
+                    } else {
+                        $carry[] = getNode($item, $firstStructure -> $item, 'deleted');
+                        $carry[] = getNode($item, $secondStructure -> $item, 'added');
+                    }
+                    break;
+                case !$secondStructureKeyExists and $firstStructureKeyExists:
+                    $carry[] = getNode($item, $firstStructure -> $item, 'deleted');
+                    break;
+                default:
+                    $carry[] = getNode($item, $secondStructure -> $item, 'added');
+            }
+            return $carry;
+        },
+        []
+    );
 
     return $accumDifferences;
 }
