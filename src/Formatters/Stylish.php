@@ -69,8 +69,8 @@ function getFormatArray(array $array, $level): string
             }
             $margin = getMargin($level);
             $carry .= isset($value) ?
-            "{$margin}  {$item}: {$value}\n" :
-            "{$margin}  {$item}:\n";
+                "{$margin}  {$item}: {$value}\n" :
+                "{$margin}  {$item}:\n";
 
             return $carry;
         },
