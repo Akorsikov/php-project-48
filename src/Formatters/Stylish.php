@@ -15,28 +15,33 @@ namespace Differ\Formatters\Stylish;
  */
 function stylish(array $nodes, int $level = 1): string
 {
-    $result = '';
-    foreach ($nodes as $item) {
-        if (array_key_exists('children', $item)) {
-            $value = stylish($item['children'], $level + 1);
-        } elseif (array_key_exists('value', $item)) {
-            if (is_array($item['value'])) {
-                $value = getFormatArray($item['value'], $level + 1);
-            } else {
-                $value = $item['value'];
+    $result = array_reduce(
+        $nodes,
+        function ($carry, $item) use ($level) {
+            if (array_key_exists('children', $item)) {
+                $value = stylish($item['children'], $level + 1);
+            } elseif (array_key_exists('value', $item)) {
+                if (is_array($item['value'])) {
+                    $value = getFormatArray($item['value'], $level + 1);
+                } else {
+                    $value = $item['value'];
+                }
             }
-        }
-        $prefix = match ($item['type']) {
-            'unchanged' => ' ',
-            'deleted' => '-',
-            'added' => '+',
-            default => ' '
-        };
-        $margin = getMargin($level);
-        $result .= isset($value) ?
-            "{$margin}{$prefix} {$item['name']}: {$value}\n" :
-            "{$margin}{$prefix} {$item['name']}:\n";
-    }
+            $prefix = match ($item['type']) {
+                'unchanged' => ' ',
+                'deleted' => '-',
+                'added' => '+',
+                default => ' '
+            };
+            $margin = getMargin($level);
+            $carry .= isset($value) ?
+                "{$margin}{$prefix} {$item['name']}: {$value}\n" :
+                "{$margin}{$prefix} {$item['name']}:\n";
+
+                return $carry;
+        },
+        ''
+    );
     $margin = getMargin($level, true);
 
     return "{\n{$result}{$margin}}";
@@ -52,20 +57,25 @@ function stylish(array $nodes, int $level = 1): string
  */
 function getFormatArray(array $array, $level): string
 {
-    $string = '';
     $listKeys = array_keys($array);
-    foreach ($listKeys as $key) {
-        if (is_array($array[$key])) {
-            $value = getFormatArray($array[$key], $level + 1);
+
+    $string = array_reduce(
+        $listKeys,
+        function ($carry, $item) use ($array, $level) {
+            if (is_array($array[$item])) {
+                $value = getFormatArray($array[$item], $level + 1);
+            } else {
+                $value = $array[$item];
+            }
             $margin = getMargin($level);
-        } else {
-            $value = $array[$key];
-            $margin = getMargin($level);
-        }
-        $string .= isset($value) ?
-        "{$margin}  {$key}: {$value}\n" :
-        "{$margin}  {$key}:\n";
-    }
+            $carry .= isset($value) ?
+            "{$margin}  {$item}: {$value}\n" :
+            "{$margin}  {$item}:\n";
+
+            return $carry;
+        },
+        ''
+    );
     $margin = getMargin($level, true);
 
     return "{\n{$string}{$margin}}";
