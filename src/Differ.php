@@ -101,9 +101,9 @@ function getNode(int|string $name, mixed $value, string $type): array
     if (is_array($value)) {
         $children = json_decode((string) json_encode($value), true);
     } elseif (is_object($value)) {
-        $value = json_decode((string) json_encode($value), true);
+        $newValue = json_decode((string) json_encode($value), true);
     } else {
-        $value = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
+        $newValue = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
     }
 
     return isset($children) ?
@@ -115,6 +115,6 @@ function getNode(int|string $name, mixed $value, string $type): array
         [
             'name' => $name,
             'type' => $type,
-            'value' => $value
+            'value' => $newValue
         ];
 }
