@@ -98,15 +98,23 @@ function getDifference(object $firstStructure, object $secondStructure, array $a
  */
 function getNode(int|string $name, mixed $value, string $type): array
 {
-    $node['name'] = $name;
-    $node['type'] = $type;
     if (is_array($value)) {
-        $node['children'] = json_decode((string) json_encode($value), true);
+        $children = json_decode((string) json_encode($value), true);
     } elseif (is_object($value)) {
-        $node['value'] = json_decode((string) json_encode($value), true);
+        $value = json_decode((string) json_encode($value), true);
     } else {
-        $node['value'] = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
+        $value = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
     }
 
-    return $node;
+    return isset($children) ?
+        [
+            'name' => $name,
+            'type' => $type,
+            'children' => $children
+        ] :
+        [
+            'name' => $name,
+            'type' => $type,
+            'value' => $value
+        ];
 }
