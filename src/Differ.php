@@ -6,6 +6,7 @@ use Exception;
 
 use function Differ\Helpers\getFileContents;
 use function Differ\Helpers\getKeysOfStructure;
+use function Differ\Helpers\sortArray;
 use function Differ\Formaters\choceFormatter;
 
 /**
@@ -50,10 +51,10 @@ function getDifference(object $firstStructure, object $secondStructure): array
     $firstStructureKeys = getKeysOfStructure($firstStructure);
     $secondStructureKeys = getKeysOfStructure($secondStructure);
     $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
-    sort($listAllKeys, SORT_STRING);
+    $sortedListAllKeys = sortArray($listAllKeys);
 
     $accumDifferences = array_reduce(
-        $listAllKeys,
+        $sortedListAllKeys,
         function ($carry, $item) use ($firstStructure, $secondStructure) {
             $firstStructureKeyExists = property_exists($firstStructure, (string) $item);
             $secondStructureKeyExists = property_exists($secondStructure, (string) $item);

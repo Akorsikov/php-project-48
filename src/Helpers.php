@@ -35,3 +35,21 @@ function getKeysOfStructure(object $structure): array
 {
     return array_keys(json_decode((string) json_encode($structure), true));
 }
+
+/**
+ * Immutable array sorting function
+ *
+ * @param array<int|string> $array sorted array
+ *
+ * @return array<int|string> already sorted array
+ */
+function sortArray(array $array): array
+{
+    if (count($array) > 1) {
+        $minItem = min($array);
+        $subArray = array_filter($array, fn($item) => $item !== $minItem);
+        return array_merge([$minItem], sortArray($subArray));
+    } else {
+        return $array;
+    }
+}
