@@ -23,46 +23,41 @@ namespace Differ\Formaters\Plain;
  */
 function plain(array $nodes, string $path = ''): string
 {
-    $result = $path;
-    $result = array_reduce($nodes, function ($carry, $item) use ($path, $nodes) {
-        $newResult = $carry;
+    return array_reduce($nodes, function ($carry, $item) use ($path, $nodes) {
         $nameNode = $path;
         if (array_key_exists('type', $item) or $item['type'] !== 'uncanged') {
             $nameNode .= "{$item['name']}.";
             $typeCurNode = $item['type'];
             $prevNode = getPrevNode($item, $nodes);
             $nextNode = getNextNode($item, $nodes);
-            // var_dump('NextNode: ', $nextNode);
             $typePrevNode = (is_null($prevNode)) ? null : $prevNode['type'];
             $typeNextNode = (is_null($nextNode)) ? null : $nextNode['type'];
             $namePrevNode = (is_null($prevNode)) ? null : $prevNode['name'];
             $nameNextNode = (is_null($nextNode)) ? null : $nextNode['name'];
 
             if (array_key_exists('children', $item)) {
-                $newResult .= plain($item['children'], $nameNode);
+                return implode('', [$carry, plain($item['children'], $nameNode)]);
             } else {
                 $nameNode = rtrim($nameNode, '.');
                 $value = getNormalisedValue($item);
                 if ($typeCurNode === 'deleted') {
                     if ($typeNextNode === 'added' and $item['name'] === $nameNextNode) {
-                        // var_dump('NextNode: ', $nextNode);
                         $newValue = getNormalisedValue($nextNode);
-                        // $newValue = getNormalisedValue($nextNode['value']);
-                        $newResult .= "Property '{$nameNode}' was updated. From {$value} to {$newValue}\n";
+                        return getTextForProperty('updated', $nameNode, $carry, $value, $newValue);
                     } else {
-                        $newResult .= "Property '{$nameNode}' was removed\n";
+                        return getTextForProperty('deleted', $nameNode, $carry);
                     }
                 } elseif ($typeCurNode === 'added') {
                     if ($typePrevNode !== 'deleted' or $item['name'] !== $namePrevNode) {
-                        $newResult .= "Property '{$nameNode}' was added with value: {$value}\n";
+                        return getTextForProperty('added', $nameNode, $carry, $value);
                     }
                 }
             }
         }
-        return $newResult;
+        return $carry;
     }, '');
-    return $result;
 }
+
 /**
  * Function returns an element (node) of an array (tree)
  * preceding the given element in this array.
@@ -122,6 +117,36 @@ function getNextNode(array $itemNodes, array $nodes): array|null
         }
     });
     return $result;
+}
+
+/**
+ * The function returns the text for the property depending on
+ * the specified type 'added' or 'deleted' or 'updated'
+ *
+ * @param string $type for choice of kind text
+ * @param string $nameProperty
+ * @param string $textAccumulater
+ * @param mixed $value current value of property
+ * @param mixed $newValue new value of property
+ *
+ * @return string
+ */
+function getTextForProperty(string $type, $nameProperty, $textAccumulater, $value = '', $newValue = ''): string
+{
+    return match ($type) {
+        'deleted' => implode(
+            '',
+            [$textAccumulater, "Property '{$nameProperty}' was removed\n"]
+        ),
+        'updated' => implode(
+            '',
+            [$textAccumulater, "Property '{$nameProperty}' was updated. From {$value} to {$newValue}\n"]
+        ),
+        default => implode(
+            '',
+            [$textAccumulater, "Property '{$nameProperty}' was added with value: {$value}\n"]
+        )
+    };
 }
 
 /**
