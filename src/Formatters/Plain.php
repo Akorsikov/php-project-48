@@ -24,9 +24,8 @@ namespace Differ\Formaters\Plain;
 function plain(array $nodes, string $path = ''): string
 {
     return array_reduce($nodes, function ($carry, $item) use ($path, $nodes) {
-        $nameNode = $path;
         if (array_key_exists('type', $item) or $item['type'] !== 'uncanged') {
-            $nameNode .= "{$item['name']}.";
+            $nameNode = implode('', [$path, "{$item['name']}."]);
             $typeCurNode = $item['type'];
             $prevNode = getPrevNode($item, $nodes);
             $nextNode = getNextNode($item, $nodes);
@@ -34,22 +33,20 @@ function plain(array $nodes, string $path = ''): string
             $typeNextNode = (is_null($nextNode)) ? null : $nextNode['type'];
             $namePrevNode = (is_null($prevNode)) ? null : $prevNode['name'];
             $nameNextNode = (is_null($nextNode)) ? null : $nextNode['name'];
-
             if (array_key_exists('children', $item)) {
                 return implode('', [$carry, plain($item['children'], $nameNode)]);
             } else {
-                $nameNode = rtrim($nameNode, '.');
                 $value = getNormalisedValue($item);
                 if ($typeCurNode === 'deleted') {
                     if ($typeNextNode === 'added' and $item['name'] === $nameNextNode) {
                         $newValue = getNormalisedValue($nextNode);
-                        return getTextForProperty('updated', $nameNode, $carry, $value, $newValue);
+                        return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, $value, $newValue);
                     } else {
-                        return getTextForProperty('deleted', $nameNode, $carry);
+                        return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
                     }
                 } elseif ($typeCurNode === 'added') {
                     if ($typePrevNode !== 'deleted' or $item['name'] !== $namePrevNode) {
-                        return getTextForProperty('added', $nameNode, $carry, $value);
+                        return getTextForProperty('added', rtrim($nameNode, '.'), $carry, $value);
                     }
                 }
             }
@@ -70,22 +67,15 @@ function plain(array $nodes, string $path = ''): string
  * @return array<mixed>|null The element (node) of the array (tree)
  * preceding the given element. Null if the given element is the first.
  */
-function getPrevNode(array $itemNodes, array $nodes): array|null
+function getPrevNode(array $itemNodes, array $nodes, int $index = 0): array|null
 {
-
-    $result = array_reduce($nodes, function ($carry, $item) use ($itemNodes) {
-        static $search = true;
-        if ($search) {
-            if ($item === $itemNodes) {
-                $search = false;
-                return $carry;
-            } else {
-                $carry = $item;
-            }
+    if ($itemNodes === $nodes[$index]) {
+        if ($index === 0) {
+            return null;
         }
-        return $carry;
-    });
-    return $result;
+        return $nodes[$index - 1];
+    }
+    return getPrevNode($itemNodes, $nodes, $index + 1);
 }
 
 /**
@@ -99,24 +89,15 @@ function getPrevNode(array $itemNodes, array $nodes): array|null
  * @return array<mixed>|null The element (node) of the array (tree)
  * following the specified element. Null if the given element is the last one.
  */
-function getNextNode(array $itemNodes, array $nodes): array|null
+function getNextNode(array $itemNodes, array $nodes, int $index = 0): array|null
 {
-    $result = array_reduce($nodes, function ($carry, $item) use ($itemNodes) {
-        static $search = true;
-        static $next = false;
-        if ($search) {
-            if ($item === $itemNodes) {
-                $next = true;
-            } elseif ($next) {
-                $carry = $item;
-            }
+    if ($itemNodes === $nodes[$index]) {
+        if ($index === count($nodes) - 1) {
+            return null;
         }
-        if (!is_null($carry)) {
-            $search = false;
-            return $carry;
-        }
-    });
-    return $result;
+        return $nodes[$index + 1];
+    }
+    return getNextNode($itemNodes, $nodes, $index + 1);
 }
 
 /**
