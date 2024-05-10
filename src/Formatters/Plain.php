@@ -40,13 +40,13 @@ function plain(array $nodes, string $path = ''): string
                 if ($typeCurNode === 'deleted') {
                     if ($typeNextNode === 'added' and $item['name'] === $nameNextNode) {
                         $newValue = getNormalisedValue($nextNode);
-                        return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, $value, $newValue);
+                        return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, [$value, $newValue]);
                     } else {
                         return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
                     }
                 } elseif ($typeCurNode === 'added') {
                     if ($typePrevNode !== 'deleted' or $item['name'] !== $namePrevNode) {
-                        return getTextForProperty('added', rtrim($nameNode, '.'), $carry, $value);
+                        return getTextForProperty('added', rtrim($nameNode, '.'), $carry, [$value]);
                     }
                 }
             }
@@ -107,12 +107,11 @@ function getNextNode(array $itemNodes, array $nodes, int $index = 0): array|null
  * @param string $type for choice of kind text
  * @param string $nameProperty
  * @param string $textAccumulater
- * @param mixed $value current value of property
- * @param mixed $newValue new value of property
+ * @param array<mixed> $value array from old value and new value of property
  *
  * @return string
  */
-function getTextForProperty(string $type, $nameProperty, $textAccumulater, $value = '', $newValue = ''): string
+function getTextForProperty(string $type, $nameProperty, $textAccumulater, array $value = []): string
 {
     return match ($type) {
         'deleted' => implode(
@@ -121,11 +120,11 @@ function getTextForProperty(string $type, $nameProperty, $textAccumulater, $valu
         ),
         'updated' => implode(
             '',
-            [$textAccumulater, "Property '{$nameProperty}' was updated. From {$value} to {$newValue}\n"]
+            [$textAccumulater, "Property '{$nameProperty}' was updated. From {$value[0]} to {$value[1]}\n"]
         ),
         default => implode(
             '',
-            [$textAccumulater, "Property '{$nameProperty}' was added with value: {$value}\n"]
+            [$textAccumulater, "Property '{$nameProperty}' was added with value: {$value[0]}\n"]
         )
     };
 }
