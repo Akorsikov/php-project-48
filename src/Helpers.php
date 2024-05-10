@@ -13,7 +13,6 @@ use function Differ\Parsers\parser;
  */
 function getFileContents(string $filepath): object
 {
-
     if (!is_readable($filepath)) {
         throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!\n");
     }
