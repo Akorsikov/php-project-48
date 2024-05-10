@@ -48,7 +48,7 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
  */
 function getDifference(object $firstStructure, object $secondStructure): array
 {
-    $accumDifferences = array_reduce(
+    return array_reduce(
         getSortedListAllKeys($firstStructure, $secondStructure),
         function ($carry, $item) use ($firstStructure, $secondStructure) {
             $firstStructureKeyExists = property_exists($firstStructure, (string) $item);
@@ -59,27 +59,27 @@ function getDifference(object $firstStructure, object $secondStructure): array
                     if (is_object($firstStructure -> $item) and is_object($secondStructure -> $item)) {
                         $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
 
-                        return array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
+                        $newNodes = array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
                     } elseif ($firstStructure -> $item === $secondStructure -> $item) {
-                        return array_merge($carry, [getNode($item, $firstStructure -> $item, 'unchanged')]);
+                        $newNodes = array_merge($carry, [getNode($item, $firstStructure -> $item, 'unchanged')]);
                     } else {
-                        return array_merge(
+                        $newNodes = array_merge(
                             $carry,
                             [getNode($item, $firstStructure -> $item, 'deleted')],
                             [getNode($item, $secondStructure -> $item, 'added')]
                         );
                     }
+                    break;
                 case !$secondStructureKeyExists and $firstStructureKeyExists:
-                    return array_merge($carry, [getNode($item, $firstStructure -> $item, 'deleted')]);
-
+                    $newNodes = array_merge($carry, [getNode($item, $firstStructure -> $item, 'deleted')]);
+                    break;
                 default:
-                    return array_merge($carry, [getNode($item, $secondStructure -> $item, 'added')]);
+                    $newNodes = array_merge($carry, [getNode($item, $secondStructure -> $item, 'added')]);
             }
+            return $newNodes;
         },
         []
     );
-
-    return $accumDifferences;
 }
 
 /**
