@@ -48,13 +48,8 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
  */
 function getDifference(object $firstStructure, object $secondStructure): array
 {
-    $firstStructureKeys = getKeysOfStructure($firstStructure);
-    $secondStructureKeys = getKeysOfStructure($secondStructure);
-    $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
-    $sortedListAllKeys = sortArray($listAllKeys);
-
     $accumDifferences = array_reduce(
-        $sortedListAllKeys,
+        getSortedListAllKeys($firstStructure, $secondStructure),
         function ($carry, $item) use ($firstStructure, $secondStructure) {
             $firstStructureKeyExists = property_exists($firstStructure, (string) $item);
             $secondStructureKeyExists = property_exists($secondStructure, (string) $item);
@@ -85,6 +80,23 @@ function getDifference(object $firstStructure, object $secondStructure): array
     );
 
     return $accumDifferences;
+}
+
+/**
+ * The function returns a sorted list of all keys of passed structures (trees)
+ *
+ * @param object $firstTree first structure (tree)
+ * @param object $secondTree second structure (tree)
+ *
+ * @return array<int|string> sorted list of all keys of passed structures (trees)
+ */
+function getSortedListAllKeys(object $firstTree, object $secondTree): array
+{
+    $firstStructureKeys = getKeysOfStructure($firstTree);
+    $secondStructureKeys = getKeysOfStructure($secondTree);
+    $listAllKeys = array_unique(array_merge($firstStructureKeys, $secondStructureKeys));
+
+    return sortArray($listAllKeys);
 }
 
 /**
