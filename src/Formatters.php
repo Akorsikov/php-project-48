@@ -19,11 +19,13 @@ function choceFormatter(array $differences, string $nameFormatter): string
 {
     switch ($nameFormatter) {
         case 'stylish':
-            return stylish($differences) . "\n";
+            $result = stylish($differences);
+            return "{$result}\n";
         case 'plain':
             return plain($differences);
         case 'json':
-            return jsonFormatter($differences) . "\n";
+            $result = jsonFormatter($differences);
+            return "{$result}\n";
         // add more formatters
         // case '<other formatter>':
         //     return <other formatter>($differences);
