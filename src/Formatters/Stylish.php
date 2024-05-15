@@ -26,6 +26,8 @@ function stylish(array $nodes, int $level = 1): string
                 } else {
                     $value = $item['value'];
                 }
+            } else {
+                $value = '';
             }
             $prefix = match ($item['type']) {
                 'unchanged' => ' ',
@@ -35,9 +37,11 @@ function stylish(array $nodes, int $level = 1): string
             };
             $margin = getMargin($level);
 
-            return $carry . (isset($value) ?
-                "{$margin}{$prefix} {$item['name']}: {$value}\n" :
-                "{$margin}{$prefix} {$item['name']}:\n");
+            return implode(
+                '',
+                [ $carry,
+                "{$margin}{$prefix} {$item['name']}: {$value}\n"]
+            );
         },
         ''
     );
@@ -68,9 +72,11 @@ function getFormatArray(array $array, $level): string
             }
             $margin = getMargin($level);
 
-            return $carry . (isset($value) ?
-                "{$margin}  {$item}: {$value}\n" :
-                "{$margin}  {$item}:\n");
+            return implode(
+                '',
+                [ $carry,
+                "{$margin}  {$item}: {$value}\n"]
+            );
         },
         ''
     );
