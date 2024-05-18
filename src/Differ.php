@@ -4,9 +4,6 @@ namespace Differ\Differ;
 
 use Exception;
 
-// use function Differ\Helpers\getFileContents;
-// use function Differ\Helpers\getKeysOfStructure;
-// use function Differ\Helpers\sortArray;
 use function Differ\Formaters\formate;
 use function Differ\Parsers\parser;
 
@@ -38,6 +35,31 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
     return $outputDiff;
 }
 
+
+/**
+ * Function receives the JSON or YML/YAML file content and decodes it into an object
+ *
+ * @param string $filepath path to JSON-file
+ *
+ * @return array<string>
+ */
+function getFileContents(string $filepath): array
+{
+    if (!is_readable($filepath)) {
+        throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!");
+    }
+    $extension = match (pathinfo($filepath, PATHINFO_EXTENSION)) {
+        'json' => 'json',
+        'yaml', 'yml' => 'yaml',
+        default => throw new \Exception(
+            "Error: Invalid file extension, use json- or yaml/yml- files !\n"
+        )
+    };
+    $content = (string) file_get_contents($filepath);
+
+    return [$content, $extension];
+}
+
 /**
  * Function compares two files (JSON or YML|YAML) and creates an array of differences for further formatting
  *
@@ -63,7 +85,6 @@ function getDifference(object $firstStructure, object $secondStructure): array
                 case $firstStructureKeyExists && $secondStructureKeyExists:
                     if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
                         $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
-
                         $newNodes = array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
                     } elseif ($firstStructure -> $item === $secondStructure -> $item) {
                         $newNodes = array_merge($carry, [getNode($item, $firstStructure -> $item, 'unchanged')]);
@@ -167,22 +188,4 @@ function getNode(int|string $name, mixed $value, string $type): array
             'type' => $type,
             'value' => $newValue
         ];
-}
-
-/**
- * Function receives the JSON or YML/YAML file content and decodes it into an object
- *
- * @param string $filepath path to JSON-file
- *
- * @return array<string>
- */
-function getFileContents(string $filepath): array
-{
-    if (!is_readable($filepath)) {
-        throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!");
-    }
-    $content = (string) file_get_contents($filepath);
-    $extension = pathinfo($filepath, PATHINFO_EXTENSION);
-
-    return [$content, $extension];
 }
