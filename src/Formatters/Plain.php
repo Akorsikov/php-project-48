@@ -36,10 +36,10 @@ function plain(array $nodes, string $path = ''): string
             if (array_key_exists('children', $item)) {
                 return implode('', [$carry, plain($item['children'], $nameNode)]);
             } else {
-                $value = getNormalisedValue($item);
+                $value = getNormalizedValue($item);
                 if ($typeCurNode === 'deleted') {
                     if ($typeNextNode === 'added' and $item['name'] === $nameNextNode) {
-                        $newValue = getNormalisedValue($nextNode);
+                        $newValue = getNormalizedValue($nextNode);
                         return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, [$value, $newValue]);
                     } else {
                         return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
@@ -139,18 +139,21 @@ function getTextForProperty(string $type, $nameProperty, $textAccumulater, array
  *
  * @return float|int|string
  */
-function getNormalisedValue(array|null $node): float|int|string
+function getNormalizedValue(array|null $node): float|int|string|null
 {
     if (is_array($node) and array_key_exists('value', $node)) {
         $value = $node['value'];
-    } else {
-        $value = null;
-    }
-    if (is_array($value)) {
-        return '[complex value]';
-    } elseif (!in_array($value, ['true', 'false', 'null'], true) and !is_numeric($value)) {
-        return "'{$value}'";
-    } else {
+
+        if (is_array($value)) {
+            return '[complex value]';
+        }
+
+        if (!in_array($value, ['true', 'false', 'null'], true) and !is_numeric($value)) {
+            return "'{$value}'";
+        }
+
         return $value;
     }
+
+    return null;
 }
