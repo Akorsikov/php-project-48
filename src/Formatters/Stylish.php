@@ -2,6 +2,10 @@
 
 namespace Differ\Formatters\Stylish;
 
+const NUMBER_INDENT_PER_LEVEL_FOR_TEXT = 4;
+const NUMBER_INDENT_PER_LEVEL_FOR_BRACKETS = 2;
+const SYMBOL_OF_INDENT = ' ';
+
 /**
  * Function formate differences two files on base array of nodes,
  * for added string move prefix '+',
@@ -9,7 +13,7 @@ namespace Differ\Formatters\Stylish;
  * for unchanged string - prefix ' '.
  *
  * @param array<mixed> $nodes node describing the differences between the two structures
- * @param int          $level nesting depth
+ * @param int $level nesting depth
  *
  * @return string return formating string
  */
@@ -35,19 +39,19 @@ function stylish(array $nodes, int $level = 1): string
                 'added' => '+',
                 default => ' '
             };
-            $margin = getMargin($level);
+            $indent = getIndent($level);
 
             return implode(
                 '',
                 [ $carry,
-                "{$margin}{$prefix} {$item['name']}: {$value}\n"]
+                "{$indent}{$prefix} {$item['name']}: {$value}\n"]
             );
         },
         ''
     );
-    $margin = getMargin($level, true);
+    $indent = getIndent($level, true);
 
-    return "{\n{$result}{$margin}}";
+    return "{\n{$result}{$indent}}";
 }
 
 /**
@@ -70,19 +74,19 @@ function getFormatArray(array $array, $level): string
             } else {
                 $value = $array[$item];
             }
-            $margin = getMargin($level);
+            $indent = getIndent($level);
 
             return implode(
                 '',
                 [ $carry,
-                "{$margin}  {$item}: {$value}\n"]
+                "{$indent}  {$item}: {$value}\n"]
             );
         },
         ''
     );
-    $margin = getMargin($level, true);
+    $indent = getIndent($level, true);
 
-    return "{\n{$string}{$margin}}";
+    return "{\n{$string}{$indent}}";
 }
 
 /**
@@ -91,15 +95,16 @@ function getFormatArray(array $array, $level): string
  * the presence of the flag $forBrackets
  *
  * @param int  $level nesting depth
- * @param bool $forBrackets decreases the left indent by two characters for clousere brackets
+ * @param bool $isBrackets decreases the left indent by two characters for clousere brackets
  *
  * @return string margin the left from spaces for differences and brackets
  */
-function getMargin(int $level, bool $forBrackets = false): string
+function getIndent(int $level, bool $isBrackets = false): string
 {
-    $numberSpacePerLevel = 4;
-    $marginToLeft = $forBrackets ? 4 : 2;
-    $margin = $level * $numberSpacePerLevel - $marginToLeft;
+    $indentToLeft = $isBrackets ?
+        NUMBER_INDENT_PER_LEVEL_FOR_TEXT :
+        NUMBER_INDENT_PER_LEVEL_FOR_BRACKETS;
+    $indent = $level * NUMBER_INDENT_PER_LEVEL_FOR_TEXT - $indentToLeft;
 
-    return str_repeat(' ', $margin);
+    return str_repeat(SYMBOL_OF_INDENT, $indent);
 }
