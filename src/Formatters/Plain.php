@@ -122,10 +122,11 @@ function getTextForProperty(string $type, $nameProperty, $textAccumulater, array
             '',
             [$textAccumulater, "Property '{$nameProperty}' was updated. From {$value[0]} to {$value[1]}\n"]
         ),
-        default => implode(
+        'added' => implode(
             '',
             [$textAccumulater, "Property '{$nameProperty}' was added with value: {$value[0]}\n"]
-        )
+        ),
+        default => throw new \Exception("Error: There is no such state -'{$type}' for the properties being compared!\n")
     };
 }
 
