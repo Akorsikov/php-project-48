@@ -8,83 +8,77 @@ use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
-    // Difference between two json-files with 'stylish' formatter
-    public function testGenDiffJsonJsonFormatDefault(): void
-    {
-        $path1 = './tests/fixtures/file1.json';
-        $path2 = './tests/fixtures/file2.json';
-        $fileDiff = './tests/fixtures/stylishDiff.txt';
+    private string $pathJson1;
+    private string $pathJson2;
+    private string $pathYml1;
+    private string $pathYaml1;
+    private string $pathYaml2;
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
+    private string $fileDiffStylish;
+    private string $fileDiffPlain;
+    private string $fileDiffJson;
+
+    protected function setUp(): void
+    {
+        $this->pathJson1 = './tests/fixtures/file1.json';
+        $this->pathJson2 = './tests/fixtures/file2.json';
+        $this->pathYml1 = './tests/fixtures/file1.yml';
+        $this->pathYaml1 = './tests/fixtures/file1.yaml';
+        $this->pathYaml2 = './tests/fixtures/file2.yaml';
+
+        $this->fileDiffStylish = './tests/fixtures/stylishDiff.txt';
+        $this->fileDiffPlain = './tests/fixtures/plainDiff.txt';
+        $this->fileDiffJson = './tests/fixtures/jsonDiff.json';
     }
 
-    // Difference between two json-files with 'plain' formatter
-    public function testGenDiffJsonJsonFormatPlain(): void
+    public function testGenDiff(): void
     {
-        $path1 = './tests/fixtures/file1.json';
-        $path2 = './tests/fixtures/file2.json';
-        $fileDiff = './tests/fixtures/plainDiff.txt';
+        // Difference between two json-files with default formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffStylish, 
+            genDiff($this->pathJson1, $this->pathJson2)
+        );
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'plain'));
-    }
+        // Difference between two json-files with 'plain' formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffPlain,
+            genDiff($this->pathJson1, $this->pathJson2, 'plain')
+        );
 
-    // Difference between two json-files with 'stylish' formatter
-    public function testGenDiffJsonJsonFormatStylish(): void
-    {
-        $path1 = './tests/fixtures/file1.json';
-        $path2 = './tests/fixtures/file2.json';
-        $fileDiff = './tests/fixtures/stylishDiff.txt';
+        // Difference between two json-files with 'stylish' formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffStylish,
+            genDiff($this->pathJson1, $this->pathJson2, 'stylish')
+        );
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
-    }
+        // Difference between json & yaml - files with 'stylish' formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffStylish,
+            genDiff($this->pathJson1, $this->pathYaml2, 'stylish')
+        );
 
-    // Difference between json & yaml - files with 'stylish' formatter
-    public function testGenDiffJsonYamlFormatStylish(): void
-    {
-        $path1 = './tests/fixtures/file1.json';
-        $path2 = './tests/fixtures/file2.yaml';
-        $fileDiff = './tests/fixtures/stylishDiff.txt';
+        // Difference between two yaml-files with 'stylish' formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffStylish,
+            genDiff($this->pathYaml1, $this->pathYaml2, 'stylish')
+        );
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
-    }
+        // Difference between yml & yaml-files with 'plain' formatter
+        $this->assertStringEqualsFile(
+            $this->fileDiffPlain,
+            genDiff($this->pathYml1, $this->pathYaml2, 'plain')
+        );
 
-    // Difference between two yaml-files with 'stylish' formatter
-    public function testGenDiffYamlYamlFormatStylish(): void
-    {
-        $path1 = './tests/fixtures/file1.yaml';
-        $path2 = './tests/fixtures/file2.yaml';
-        $fileDiff = './tests/fixtures/stylishDiff.txt';
+        // Difference between two json-files with 'json-formatter'
+        $this->assertStringEqualsFile(
+            $this->fileDiffJson,
+            genDiff($this->pathJson1, $this->pathJson2, 'json')
+        );
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
-    }
-
-    // Difference between yml & yaml-files with 'plain' formatter
-    public function testGenDiffYmlYamlFormatPlain(): void
-    {
-        $path1 = './tests/fixtures/file1.yml';
-        $path2 = './tests/fixtures/file2.yaml';
-        $fileDiff = './tests/fixtures/plainDiff.txt';
-
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'plain'));
-    }
-
-    // Difference between two json-files with 'json-formatter'
-    public function testGenDiffJsonJsonFormatJson(): void
-    {
-        $path1 = './tests/fixtures/file1.json';
-        $path2 = './tests/fixtures/file2.json';
-        $fileDiff = './tests/fixtures/jsonDiff.json';
-
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'json'));
-    }
-
-    // Difference between two yaml-files with 'json-formatter'
-    public function testGenDiffYamlYamlFormatJson(): void
-    {
-        $path1 = './tests/fixtures/file1.yaml';
-        $path2 = './tests/fixtures/file2.yaml';
-        $fileDiff = './tests/fixtures/jsonDiff.json';
-
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'json'));
+        // Difference between two yaml-files with 'json-formatter'
+        $this->assertStringEqualsFile(
+            $this->fileDiffJson,
+            genDiff($this->pathYml1, $this->pathYaml2, 'json')
+        );
     }
 }
