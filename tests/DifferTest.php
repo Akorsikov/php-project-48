@@ -9,17 +9,17 @@ use function Differ\Differ\genDiff;
 class DifferTest extends TestCase
 {
     // Difference between two json-files with 'stylish' formatter
-    public function testGenDiffJsonJsonDefault(): void
+    public function testGenDiffJsonJsonFormatDefault(): void
     {
         $path1 = './tests/fixtures/file1.json';
         $path2 = './tests/fixtures/file2.json';
         $fileDiff = './tests/fixtures/stylish-diff.txt';
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
+        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
     }
 
     // Difference between two json-files with 'plain' formatter
-    public function testGenDiffJsonJsonPlain(): void
+    public function testGenDiffJsonJsonFormatPlain(): void
     {
         $path1 = './tests/fixtures/file1.json';
         $path2 = './tests/fixtures/file2.json';
@@ -29,17 +29,17 @@ class DifferTest extends TestCase
     }
 
     // Difference between two json-files with default formatter
-    public function testGenDiffJsonJsonStylish(): void
+    public function testGenDiffJsonJsonFormatStylish(): void
     {
         $path1 = './tests/fixtures/file1.json';
         $path2 = './tests/fixtures/file2.json';
         $fileDiff = './tests/fixtures/stylish-diff.txt';
 
-        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2));
+        $this->assertStringEqualsFile($fileDiff, genDiff($path1, $path2, 'stylish'));
     }
 
     // Difference between json & yaml - files with 'stylish' formatter
-    public function testGenDiffJsonYamlStylish(): void
+    public function testGenDiffJsonYamlFormatStylish(): void
     {
         $path1 = './tests/fixtures/file1.json';
         $path2 = './tests/fixtures/file2.yaml';
@@ -49,7 +49,7 @@ class DifferTest extends TestCase
     }
 
     // Difference between two yaml-files with 'stylish' formatter
-    public function testGenDiffYamlYamlStylish(): void
+    public function testGenDiffYamlYamlFormatStylish(): void
     {
         $path1 = './tests/fixtures/file1.yaml';
         $path2 = './tests/fixtures/file2.yaml';
@@ -59,9 +59,9 @@ class DifferTest extends TestCase
     }
 
     // Difference between two yaml-files with 'plain' formatter
-    public function testGenDiffYamlYamlPlain(): void
+    public function testGenDiffYmlYamlFormatPlain(): void
     {
-        $path1 = './tests/fixtures/file1.yaml';
+        $path1 = './tests/fixtures/file1.yml';
         $path2 = './tests/fixtures/file2.yaml';
         $fileDiff = './tests/fixtures/plain-diff.txt';
 
@@ -69,7 +69,7 @@ class DifferTest extends TestCase
     }
 
     // Difference between two json-files with 'json-formatter'
-    public function testGenDiffJsonJsonJson(): void
+    public function testGenDiffJsonJsonFormatJson(): void
     {
         $path1 = './tests/fixtures/file1.json';
         $path2 = './tests/fixtures/file2.json';
@@ -79,7 +79,7 @@ class DifferTest extends TestCase
     }
 
     // Difference between two yaml-files with 'json-formatter'
-    public function testGenDiffYamlYamlJson(): void
+    public function testGenDiffYamlYamlFormatJson(): void
     {
         $path1 = './tests/fixtures/file1.yaml';
         $path2 = './tests/fixtures/file2.yaml';
