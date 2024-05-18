@@ -48,7 +48,7 @@ function sortArray(array $array): array
         $minItem = min($array);
         $subArray = array_filter($array, fn($item) => $item !== $minItem);
         return array_merge([$minItem], sortArray($subArray));
-    } else {
-        return $array;
     }
+
+    return $array;
 }
