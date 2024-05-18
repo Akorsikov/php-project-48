@@ -55,8 +55,8 @@ function getDifference(object $firstStructure, object $secondStructure): array
             $secondStructureKeyExists = property_exists($secondStructure, (string) $item);
 
             switch (true) {
-                case $firstStructureKeyExists and $secondStructureKeyExists:
-                    if (is_object($firstStructure -> $item) and is_object($secondStructure -> $item)) {
+                case $firstStructureKeyExists && $secondStructureKeyExists:
+                    if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
                         $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
 
                         $newNodes = array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
@@ -70,7 +70,7 @@ function getDifference(object $firstStructure, object $secondStructure): array
                         );
                     }
                     break;
-                case !$secondStructureKeyExists and $firstStructureKeyExists:
+                case !$secondStructureKeyExists && $firstStructureKeyExists:
                     $newNodes = array_merge($carry, [getNode($item, $firstStructure -> $item, 'deleted')]);
                     break;
                 default:
@@ -116,7 +116,9 @@ function getNode(int|string $name, mixed $value, string $type): array
     } elseif (is_object($value)) {
         $newValue = json_decode((string) json_encode($value), true);
     } else {
-        $newValue = (is_bool($value) or is_null($value)) ? strtolower(var_export($value, true)) : $value;
+        $newValue = (is_bool($value) || is_null($value)) ?
+        strtolower(var_export($value, true)) :
+        $value;
     }
 
     return isset($children) ?
