@@ -4,10 +4,11 @@ namespace Differ\Differ;
 
 use Exception;
 
-use function Differ\Helpers\getFileContents;
-use function Differ\Helpers\getKeysOfStructure;
-use function Differ\Helpers\sortArray;
-use function Differ\Formaters\choceFormatter;
+// use function Differ\Helpers\getFileContents;
+// use function Differ\Helpers\getKeysOfStructure;
+// use function Differ\Helpers\sortArray;
+use function Differ\Formaters\formate;
+use function Differ\Parsers\parser;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -22,12 +23,16 @@ use function Differ\Formaters\choceFormatter;
 function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'stylish'): string
 {
     try {
-        $firstFileContents = getFileContents($pathFirst);
-        $secondFileContents = getFileContents($pathSecond);
+        [$firstFileRawContents, $extension] = getFileContents($pathFirst);
+        $firstFileContents = parser($firstFileRawContents, $extension);
+
+        [$secondFileRawContents, $extension] = getFileContents($pathSecond);
+        $secondFileContents = parser($secondFileRawContents, $extension);
+
         $differences = getDifference($firstFileContents, $secondFileContents);
-        $outputDiff = choceFormatter($differences, $formatter);
+        $outputDiff = formate($differences, $formatter);
     } catch (\Exception $exception) {
-        echo ($exception);
+        echo ($exception->getMessage());
         $outputDiff = "\n";
     }
     return $outputDiff;
@@ -83,6 +88,36 @@ function getDifference(object $firstStructure, object $secondStructure): array
 }
 
 /**
+ * Function returned all keys of structure such object
+ *
+ * @param object $structure object
+ *
+ * @return array<int, int|string> all keys of object
+ */
+function getKeysOfStructure(object $structure): array
+{
+    return array_keys(json_decode((string) json_encode($structure), true));
+}
+
+/**
+ * Immutable array sorting function
+ *
+ * @param array<int|string> $array sorted array
+ *
+ * @return array<int|string> already sorted array
+ */
+function sortArray(array $array): array
+{
+    if (count($array) > 1) {
+        $minItem = min($array);
+        $subArray = array_filter($array, fn($item) => $item !== $minItem);
+        return array_merge([$minItem], sortArray($subArray));
+    }
+
+    return $array;
+}
+
+/**
  * The function returns a sorted list of all keys of passed structures (trees)
  *
  * @param object $firstTree first structure (tree)
@@ -132,4 +167,22 @@ function getNode(int|string $name, mixed $value, string $type): array
             'type' => $type,
             'value' => $newValue
         ];
+}
+
+/**
+ * Function receives the JSON or YML/YAML file content and decodes it into an object
+ *
+ * @param string $filepath path to JSON-file
+ *
+ * @return array<string>
+ */
+function getFileContents(string $filepath): array
+{
+    if (!is_readable($filepath)) {
+        throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!");
+    }
+    $content = (string) file_get_contents($filepath);
+    $extension = pathinfo($filepath, PATHINFO_EXTENSION);
+
+    return [$content, $extension];
 }
