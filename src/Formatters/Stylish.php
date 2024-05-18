@@ -51,7 +51,9 @@ function getStylishFormate(array $nodes, int $level = 1): string
                 'unchanged' => ' ',
                 'deleted' => '-',
                 'added' => '+',
-                default => ' '
+                default => throw new \Exception(
+                    "Error: Unknown property state type - '{$item['type']}'!"
+                )
             };
             $indent = getIndent($level);
 
