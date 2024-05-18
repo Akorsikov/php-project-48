@@ -4,7 +4,7 @@ namespace Differ\Formaters;
 
 use function Differ\Formaters\Plain\plain;
 use function Differ\Formatters\Stylish\stylish;
-use function Differ\Formatters\Json\Formater\json;
+use function Differ\Formatters\Json\json;
 
 /**
  * Function formats the difference array of two files
