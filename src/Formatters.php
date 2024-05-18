@@ -11,25 +11,16 @@ use function Differ\Formatters\Json\Formater\json;
  * for displaying on the screen.
  *
  * @param array<mixed> $differences difference array of two files
- * @param string $nameFormatter 'plain' or 'stylish'
+ * @param string $formatter 'plain' or 'stylish'
  *
  * @return string for displaying on the screen
  */
-function choceFormatter(array $differences, string $nameFormatter): string
+function choceFormatter(array $differences, string $formatter): string
 {
-    switch ($nameFormatter) {
-        case 'stylish':
-            $result = stylish($differences);
-            return "{$result}\n";
-        case 'plain':
-            return plain($differences);
-        case 'json':
-            $result = json($differences);
-            return "{$result}\n";
-        // add more formatters
-        // case '<other formatter>':
-        //     return <other formatter>($differences);
-        default:
-            throw new \Exception("Error: There is no such '{$nameFormatter}' formatter!\n");
-    }
+    return match ($formatter) {
+        'stylish' => stylish($differences),
+        'plain' => plain($differences),
+        'json' => json($differences),
+        default => throw new \Exception("Error: There is no such '{$formatter}' formatter!\n")
+    };
 }

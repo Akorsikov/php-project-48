@@ -7,6 +7,20 @@ const NUMBER_INDENT_PER_LEVEL_FOR_BRACKETS = 2;
 const SYMBOL_OF_INDENT = ' ';
 
 /**
+ * Function - wrapper, call recursive function.
+ *
+ * @param array<mixed> $nodes node describing the differences between the two structures
+ *
+ * @return string return formating string and moves to a new line
+ */
+function stylish(array $nodes): string
+{
+    $result = getStylishFormate($nodes);
+
+    return "{$result}\n";
+}
+
+/**
  * Function formate differences two files on base array of nodes,
  * for added string move prefix '+',
  * for deleted string - prefix '-',
@@ -17,13 +31,13 @@ const SYMBOL_OF_INDENT = ' ';
  *
  * @return string return formating string
  */
-function stylish(array $nodes, int $level = 1): string
+function getStylishFormate(array $nodes, int $level = 1): string
 {
     $result = array_reduce(
         $nodes,
         function ($carry, $item) use ($level) {
             if (array_key_exists('children', $item)) {
-                $value = stylish($item['children'], $level + 1);
+                $value = getStylishFormate($item['children'], $level + 1);
             } elseif (array_key_exists('value', $item)) {
                 if (is_array($item['value'])) {
                     $value = getFormatArray($item['value'], $level + 1);
@@ -62,7 +76,7 @@ function stylish(array $nodes, int $level = 1): string
  *
  * @return string return formating string
  */
-function getFormatArray(array $array, $level): string
+function getFormatArray(array $array, int $level): string
 {
     $listKeys = array_keys($array);
 

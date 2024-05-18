@@ -24,30 +24,29 @@ namespace Differ\Formaters\Plain;
 function plain(array $nodes, string $path = ''): string
 {
     return array_reduce($nodes, function ($carry, $item) use ($path, $nodes) {
-        if (array_key_exists('type', $item) or $item['type'] !== 'uncanged') {
+        if (array_key_exists('type', $item)) {
             $nameNode = implode('', [$path, "{$item['name']}."]);
             $typeCurNode = $item['type'];
             $prevNode = getPrevNode($item, $nodes);
             $nextNode = getNextNode($item, $nodes);
-            $typePrevNode = (is_null($prevNode)) ? null : $prevNode['type'];
-            $typeNextNode = (is_null($nextNode)) ? null : $nextNode['type'];
-            $namePrevNode = (is_null($prevNode)) ? null : $prevNode['name'];
-            $nameNextNode = (is_null($nextNode)) ? null : $nextNode['name'];
+            $typePrevNode = is_null($prevNode) ? null : $prevNode['type'];
+            $typeNextNode = is_null($nextNode) ? null : $nextNode['type'];
+            $namePrevNode = is_null($prevNode) ? null : $prevNode['name'];
+            $nameNextNode = is_null($nextNode) ? null : $nextNode['name'];
             if (array_key_exists('children', $item)) {
                 return implode('', [$carry, plain($item['children'], $nameNode)]);
-            } else {
-                $value = getNormalizedValue($item);
-                if ($typeCurNode === 'deleted') {
-                    if ($typeNextNode === 'added' and $item['name'] === $nameNextNode) {
-                        $newValue = getNormalizedValue($nextNode);
-                        return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, [$value, $newValue]);
-                    } else {
-                        return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
-                    }
-                } elseif ($typeCurNode === 'added') {
-                    if ($typePrevNode !== 'deleted' or $item['name'] !== $namePrevNode) {
-                        return getTextForProperty('added', rtrim($nameNode, '.'), $carry, [$value]);
-                    }
+            }
+            $value = getNormalizedValue($item);
+            if ($typeCurNode === 'deleted') {
+                if ($typeNextNode === 'added' && $item['name'] === $nameNextNode) {
+                    $newValue = getNormalizedValue($nextNode);
+                    return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, [$value, $newValue]);
+                }
+                return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
+            }
+            if ($typeCurNode === 'added') {
+                if ($typePrevNode !== 'deleted' || $item['name'] !== $namePrevNode) {
+                    return getTextForProperty('added', rtrim($nameNode, '.'), $carry, [$value]);
                 }
             }
         }
@@ -149,7 +148,7 @@ function getNormalizedValue(array|null $node): float|int|string|null
             return '[complex value]';
         }
 
-        if (!in_array($value, ['true', 'false', 'null'], true) and !is_numeric($value)) {
+        if (!in_array($value, ['true', 'false', 'null'], true) && !is_numeric($value)) {
             return "'{$value}'";
         }
 

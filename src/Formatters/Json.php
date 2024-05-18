@@ -11,5 +11,7 @@ namespace Differ\Formatters\Json\Formater;
  */
 function json(array $nodes): string
 {
-    return (string) json_encode($nodes);
+    $result = (string) json_encode($nodes);
+
+    return "{$result}\n";
 }
