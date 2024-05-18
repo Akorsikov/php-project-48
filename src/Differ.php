@@ -20,11 +20,11 @@ use function Differ\Parsers\parser;
 function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'stylish'): string
 {
     try {
-        [$firstFileRawContents, $extension] = getFileContents($pathFirst);
-        $firstFileContents = parser($firstFileRawContents, $extension);
+        [$firstFileRawContents, $firstExtension] = getFileContents($pathFirst);
+        $firstFileContents = parser($firstFileRawContents, $firstExtension);
 
-        [$secondFileRawContents, $extension] = getFileContents($pathSecond);
-        $secondFileContents = parser($secondFileRawContents, $extension);
+        [$secondFileRawContents, $secondExtension] = getFileContents($pathSecond);
+        $secondFileContents = parser($secondFileRawContents, $secondExtension);
 
         $differences = getDifference($firstFileContents, $secondFileContents);
         $outputDiff = formate($differences, $formatter);

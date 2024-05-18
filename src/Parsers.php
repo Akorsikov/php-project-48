@@ -16,7 +16,7 @@ function parser(string $fileContent, string $extension): object
 {
     switch ($extension) {
         case 'json':
-            return json_decode((string) $fileContent, false);
+            return json_decode($fileContent, false);
         case 'yaml':
             return Yaml::parse($fileContent, Yaml::PARSE_OBJECT_FOR_MAP);
         default:
