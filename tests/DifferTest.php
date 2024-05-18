@@ -35,7 +35,7 @@ class DifferTest extends TestCase
     {
         // Difference between two json-files with default formatter
         $this->assertStringEqualsFile(
-            $this->fileDiffStylish, 
+            $this->fileDiffStylish,
             genDiff($this->pathJson1, $this->pathJson2)
         );
 

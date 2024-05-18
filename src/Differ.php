@@ -35,7 +35,6 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
     return $outputDiff;
 }
 
-
 /**
  * Function receives the JSON or YML/YAML file content and decodes it into an object
  *
