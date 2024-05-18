@@ -9,7 +9,7 @@ namespace Differ\Formatters\Json\Formater;
  *
  * @return string with json format
  */
-function jsonFormatter(array $nodes): string
+function json(array $nodes): string
 {
     return (string) json_encode($nodes);
 }
