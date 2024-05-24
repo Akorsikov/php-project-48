@@ -137,11 +137,11 @@ function getTextForProperty(string $type, string $nameProperty, string $textAccu
  *
  * @param array<mixed>|null $node
  *
- * @return float|int|string
+ * @return float|int|string|null
  */
 function getNormalizedValue(array|null $node): float|int|string|null
 {
-    if (is_array($node) and array_key_exists('value', $node)) {
+    if (is_array($node) && array_key_exists('value', $node)) {
         $value = $node['value'];
 
         if (is_array($value)) {
