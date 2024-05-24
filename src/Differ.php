@@ -83,8 +83,8 @@ function getDifference(object $firstStructure, object $secondStructure): array
             switch (true) {
                 case $firstStructureKeyExists && $secondStructureKeyExists:
                     if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
-                        $nestedSructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
-                        $newNodes = array_merge($carry, [getNode($item, $nestedSructure, 'unchanged')]);
+                        $nestedStructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
+                        $newNodes = array_merge($carry, [getNode($item, $nestedStructure, 'unchanged')]);
                     } elseif ($firstStructure -> $item === $secondStructure -> $item) {
                         $newNodes = array_merge($carry, [getNode($item, $firstStructure -> $item, 'unchanged')]);
                     } else {

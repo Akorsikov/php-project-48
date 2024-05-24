@@ -15,13 +15,13 @@ const SYMBOL_OF_INDENT = ' ';
  */
 function stylish(array $nodes): string
 {
-    $result = getStylishFormate($nodes);
+    $result = format($nodes);
 
     return "{$result}\n";
 }
 
 /**
- * Function formate differences two files on base array of nodes,
+ * Function format differences two files on base array of nodes,
  * for added string move prefix '+',
  * for deleted string - prefix '-',
  * for unchanged string - prefix ' '.
@@ -31,13 +31,13 @@ function stylish(array $nodes): string
  *
  * @return string return formating string
  */
-function getStylishFormate(array $nodes, int $level = 1): string
+function format(array $nodes, int $level = 1): string
 {
     $result = array_reduce(
         $nodes,
         function ($carry, $item) use ($level) {
             if (array_key_exists('children', $item)) {
-                $value = getStylishFormate($item['children'], $level + 1);
+                $value = format($item['children'], $level + 1);
             } elseif (array_key_exists('value', $item)) {
                 if (is_array($item['value'])) {
                     $value = getFormatArray($item['value'], $level + 1);
