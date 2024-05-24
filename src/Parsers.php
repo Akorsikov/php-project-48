@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Yaml;
  * Function converts json or yaml/yml file contents into an object
  *
  * @param string $fileContent content of file
- * @param string $extension extention of file
+ * @param string $format extention of file
  *
  * @return object object with recursive structure
  */
