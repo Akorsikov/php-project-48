@@ -12,16 +12,13 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @return object object with recursive structure
  */
-function parser(string $fileContent, string $extension): object
+function parser(string $fileContent, string $format): object
 {
-    switch ($extension) {
-        case 'json':
-            return json_decode($fileContent, false);
-        case 'yaml':
-            return Yaml::parse($fileContent, Yaml::PARSE_OBJECT_FOR_MAP);
-        default:
-            throw new \Exception(
-                "Error: Invalid file extension '{$extension}', use json- or yaml/yml- files !\n"
-            );
-    }
+    return match ($format) {
+        'json' => json_decode($fileContent, false),
+        'yaml' => Yaml::parse($fileContent, Yaml::PARSE_OBJECT_FOR_MAP),
+        default => throw new \Exception(
+            "Error: Invalid file extension '{$format}', use json- or yaml/yml- files !\n"
+        )
+    };
 }
