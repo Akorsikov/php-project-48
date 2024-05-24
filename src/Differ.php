@@ -20,11 +20,11 @@ use function Differ\Parsers\parser;
 function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'stylish'): string
 {
     try {
-        [$firstFileRawContents, $firstExtension] = getFileContents($pathFirst);
-        $firstFileContents = parser($firstFileRawContents, $firstExtension);
+        [$firstFileRawContents, $firstFileFormat] = getFileContents($pathFirst);
+        $firstFileContents = parser($firstFileRawContents, $firstFileFormat);
 
-        [$secondFileRawContents, $secondExtension] = getFileContents($pathSecond);
-        $secondFileContents = parser($secondFileRawContents, $secondExtension);
+        [$secondFileRawContents, $secondFileFormat] = getFileContents($pathSecond);
+        $secondFileContents = parser($secondFileRawContents, $secondFileFormat);
 
         $differences = getDifference($firstFileContents, $secondFileContents);
         $outputDiff = formate($differences, $formatter);
@@ -47,7 +47,7 @@ function getFileContents(string $filepath): array
     if (!is_readable($filepath)) {
         throw new \Exception("Error: The file '{$filepath}' do not exist or are unreadable!");
     }
-    $extension = match (pathinfo($filepath, PATHINFO_EXTENSION)) {
+    $format = match (pathinfo($filepath, PATHINFO_EXTENSION)) {
         'json' => 'json',
         'yaml', 'yml' => 'yaml',
         default => throw new \Exception(
@@ -56,7 +56,7 @@ function getFileContents(string $filepath): array
     };
     $content = (string) file_get_contents($filepath);
 
-    return [$content, $extension];
+    return [$content, $format];
 }
 
 /**
