@@ -19,14 +19,14 @@ class DifferTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pathJson1 = './tests/fixtures/file1.json';
-        $this->pathJson2 = './tests/fixtures/file2.json';
-        $this->pathYml1 = './tests/fixtures/file1.yml';
-        $this->pathYaml2 = './tests/fixtures/file2.yaml';
+        $this->pathJson1 = __DIR__ . '/fixtures/file1.json';
+        $this->pathJson2 = __DIR__ . '/fixtures/file2.json';
+        $this->pathYml1  = __DIR__ . '/fixtures/file1.yml';
+        $this->pathYaml2 = __DIR__ . '/fixtures/file2.yaml';
 
-        $this->fileDiffStylish = './tests/fixtures/stylishDiff.txt';
-        $this->fileDiffPlain = './tests/fixtures/plainDiff.txt';
-        $this->fileDiffJson = './tests/fixtures/jsonDiff.json';
+        $this->fileDiffStylish = __DIR__ . '/fixtures/stylishDiff.txt';
+        $this->fileDiffPlain   = __DIR__ . '/fixtures/plainDiff.txt';
+        $this->fileDiffJson    = __DIR__ . '/fixtures/jsonDiff.json';
     }
 
     public function testGenDiff(): void
