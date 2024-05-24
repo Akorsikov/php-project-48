@@ -1,7 +1,7 @@
 {
     "name": "hexlet/code",
     "description": "difference measurer",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "autoload": {
         "files": [
