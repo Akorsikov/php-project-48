@@ -1,6 +1,12 @@
 install:
 	composer install
 
+valid:
+	composer validate	
+
+dump:
+	composer dump-autoload
+
 lint:
 	composer exec --verbose phpcs -- --standard=PSR12 --colors src bin
 
