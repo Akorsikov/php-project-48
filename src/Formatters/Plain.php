@@ -110,7 +110,7 @@ function getNextNode(array $itemNodes, array $nodes, int $index = 0): array|null
  *
  * @return string
  */
-function getTextForProperty(string $type, $nameProperty, $textAccumulater, array $value = []): string
+function getTextForProperty(string $type, string $nameProperty, string $textAccumulater, array $value = []): string
 {
     return match ($type) {
         'deleted' => implode(
