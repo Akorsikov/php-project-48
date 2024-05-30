@@ -82,28 +82,31 @@ function getDifference(object $firstStructure, object $secondStructure): array
             $firstStructureKeyExists = property_exists($firstStructure, (string) $item);
             $secondStructureKeyExists = property_exists($secondStructure, (string) $item);
 
-            switch (true) {
-                case $firstStructureKeyExists && $secondStructureKeyExists:
-                    return getNode($firstStructure, $secondStructure, $item, $carry);
-                case !$secondStructureKeyExists && $firstStructureKeyExists:
-                    return array_merge(
+            return match (true) {
+                $firstStructureKeyExists && $secondStructureKeyExists =>
+                    getNode($firstStructure, $secondStructure, $item, $carry),
+                !$secondStructureKeyExists && $firstStructureKeyExists =>
+                    array_merge(
                         $carry,
                         [getNodeWithOneValue(
                             $item,
                             [$firstStructure -> $item],
                             'deleted'
                         )]
-                    );
-                case !$firstStructureKeyExists && $secondStructureKeyExists:
-                    return array_merge(
+                    ),
+                !$firstStructureKeyExists && $secondStructureKeyExists =>
+                    array_merge(
                         $carry,
                         [getNodeWithOneValue(
                             $item,
                             [$secondStructure -> $item],
                             'added'
                         )]
-                    );
-            }
+                    ),
+                default => throw new \Exception(
+                    "Error: Unknown state of structures!\n"
+                )
+            };
         },
         []
     );
