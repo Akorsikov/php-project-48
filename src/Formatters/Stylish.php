@@ -36,32 +36,27 @@ function format(array $nodes, int $level = 1): string
     $result = array_reduce(
         $nodes,
         function ($carry, $item) use ($level) {
-            if (array_key_exists('children', $item)) {
-                $value = format($item['children'], $level + 1);
-            } elseif (array_key_exists('value', $item)) {
-                if (is_array($item['value'])) {
-                    $value = getFormatArray($item['value'], $level + 1);
-                } else {
-                    $value = $item['value'];
-                }
-            } else {
-                $value = '';
-            }
-            $prefix = match ($item['type']) {
-                'unchanged' => ' ',
-                'deleted' => '-',
-                'added' => '+',
-                default => throw new \Exception(
-                    "Error: Unknown property state type - '{$item['type']}'!"
-                )
-            };
-            $indent = getIndent($level);
+            if ($item['type'] !== 'changed') {
+                $value = getValue($item, $level);
+                $prefix = getPrefix($item['type']);
+                $indent = getIndent($level);
 
-            return implode(
-                '',
-                [ $carry,
-                "{$indent}{$prefix} {$item['name']}: {$value}\n"]
-            );
+                return implode(
+                    '',
+                    [$carry,
+                    "{$indent}{$prefix} {$item['name']}: {$value}\n"]
+                );
+            } else {
+                $indent = getIndent($level);
+                $oldValue = getChangedValue($item, 'oldValue', $level);
+                $newValue = getChangedValue($item, 'newValue', $level);
+                return implode(
+                    '',
+                    [$carry,
+                    "{$indent}- {$item['name']}: {$oldValue}\n",
+                    "{$indent}+ {$item['name']}: {$newValue}\n"]
+                );
+            }
         },
         ''
     );
@@ -123,4 +118,61 @@ function getIndent(int $level, bool $isBrackets = false): string
     $indent = $level * NUMBER_INDENT_PER_LEVEL_FOR_TEXT - $indentToLeft;
 
     return str_repeat(SYMBOL_OF_INDENT, $indent);
+}
+
+/**
+ * function returns a prefix depending on node type
+ *
+ * @param string $itemType node type
+ *
+ * @return string symbol of prefix (' ' | '-' | '+')
+ */
+function getPrefix(string $itemType): string
+{
+    return match ($itemType) {
+        'unchanged' => ' ',
+        'deleted' => '-',
+        'added' => '+',
+        default => throw new \Exception(
+            "Error: Unknown property state type - '{$itemType}'!"
+        )
+    };
+}
+
+/**
+ * Function returns the value of the node
+ *
+ * @param array<mixed> $node
+ * @param int $level nesting level
+ *
+ * @return mixed
+ */
+function getValue(array $node, int $level): mixed
+{
+    if (array_key_exists('children', $node)) {
+        return format($node['children'], $level + 1);
+    } elseif (array_key_exists('value', $node)) {
+        if (is_array($node['value'])) {
+            return getFormatArray($node['value'], $level + 1);
+        }
+    }
+    return $node['value'];
+}
+
+/**
+ * Function returns the value of the node with 'changed' type
+ *
+ * @param array<mixed> $node
+ * @param int $level nesting level
+ *
+ * @return mixed
+ */
+function getChangedValue(array $node, string $keyValue, int $level): mixed
+{
+    if (is_array($node[$keyValue])) {
+        $value = getFormatArray($node[$keyValue], $level + 1);
+    } else {
+        $value = $node[$keyValue];
+    }
+    return $value;
 }
