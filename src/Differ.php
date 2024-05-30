@@ -84,25 +84,26 @@ function getDifference(object $firstStructure, object $secondStructure): array
 
             switch (true) {
                 case $firstStructureKeyExists && $secondStructureKeyExists:
-                    if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
-                        $nestedStructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
-                        $newNodes = array_merge($carry, [getNode($item, [$nestedStructure], 'unchanged')]);
-                    } elseif ($firstStructure -> $item === $secondStructure -> $item) {
-                        $newNodes = array_merge($carry, [getNode($item, [$firstStructure -> $item], 'unchanged')]);
-                    } else {
-                        $newNodes = array_merge(
-                            $carry,
-                            [getNode($item, [$firstStructure -> $item, $secondStructure -> $item], 'changed')],
-                        );
-                    }
-                    break;
+                    return getNode($firstStructure, $secondStructure, $item, $carry);
                 case !$secondStructureKeyExists && $firstStructureKeyExists:
-                    $newNodes = array_merge($carry, [getNode($item, [$firstStructure -> $item], 'deleted')]);
-                    break;
-                default:
-                    $newNodes = array_merge($carry, [getNode($item, [$secondStructure -> $item], 'added')]);
+                    return array_merge(
+                        $carry,
+                        [getNodeWithOneValue(
+                            $item,
+                            [$firstStructure -> $item],
+                            'deleted'
+                        )]
+                    );
+                case $secondStructureKeyExists && !$firstStructureKeyExists:
+                    return array_merge(
+                        $carry,
+                        [getNodeWithOneValue(
+                            $item,
+                            [$secondStructure -> $item],
+                            'added'
+                        )]
+                    );
             }
-            return $newNodes;
         },
         []
     );
@@ -156,50 +157,37 @@ function getSortedListAllKeys(object $firstTree, object $secondTree): array
 }
 
 /**
- * Function create node with name, value and type
+ * Function create node for two item of structres with same keys
  *
- * @param string $name name node;
- * @param array<mixed> $values value node;
- * @param string $type type node may be 'unchanged' | 'deleted' | 'added' ;
+ * @param object $firstStructure;
+ * @param object $secondStructure;
+ * @param mixed $item;
+ * @param mixed $carry;
  *
  * @return array<mixed> return node;
  */
-function getNode(int|string $name, array $values, string $type): array
+function getNode(object $firstStructure, object $secondStructure, mixed $item, mixed $carry): array
 {
-    if ($type !== 'changed') {
-        [$value] = $values;
-        if (is_array($value)) {
-            $children = getChildTree($value);
-
-            return [
-                'name' => $name,
-                'type' => $type,
-                'children' => $children
-            ];
-        } elseif (is_object($value)) {
-            $newValue = getChildTree($value);
-        } else {
-            $newValue = (is_bool($value) || is_null($value)) ?
-            strtolower(var_export($value, true)) :
-            $value;
-        }
-        return [
-            'name' => $name,
-            'type' => $type,
-            'value' => $newValue
-        ];
+    if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
+        $nestedStructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
+        return array_merge($carry, [getNodeWithOneValue($item, [$nestedStructure], 'unchanged')]);
+    } elseif ($firstStructure -> $item === $secondStructure -> $item) {
+        return array_merge(
+            $carry,
+            [getNodeWithOneValue($item, [$firstStructure -> $item], 'unchanged')]
+        );
     } else {
-        $oldValue = getChangedValue($values[0]);
-        $newValue = getChangedValue($values[1]);
-
-        return [
-            'name' => $name,
-            'type' => $type,
-            'oldValue' => $oldValue,
-            'newValue' => $newValue
-        ];
+        return array_merge(
+            $carry,
+            [getNodeWithTwoValues(
+                $item,
+                [$firstStructure -> $item, $secondStructure -> $item],
+                'changed'
+            )]
+        );
     }
 }
+
 
 /**
  * Function returns the child tree of the passed node
@@ -211,6 +199,64 @@ function getNode(int|string $name, array $values, string $type): array
 function getChildTree(mixed $treeItem): array
 {
     return json_decode((string) json_encode($treeItem), true);
+}
+
+/**
+ * Function create node with name, value and type
+ *
+ * @param string $name is name node;
+ * @param array<mixed> $values is array from one value node;
+ * @param string $type is type node may be 'unchanged' | 'deleted' | 'added' ;
+ *
+ * @return array<mixed> return node;
+ */
+function getNodeWithOneValue(int|string $name, array $values, string $type): array
+{
+    [$value] = $values;
+    if (is_array($value)) {
+        $children = getChildTree($value);
+
+        return [
+            'name' => $name,
+            'type' => $type,
+            'children' => $children
+        ];
+    }
+    if (is_object($value)) {
+        $newValue = getChildTree($value);
+    } else {
+        $newValue = (is_bool($value) || is_null($value)) ?
+        strtolower(var_export($value, true)) :
+        $value;
+    }
+
+    return [
+        'name' => $name,
+        'type' => $type,
+        'value' => $newValue
+    ];
+}
+
+/**
+ * Function create node with name, two values and type
+ *
+ * @param string $name is name node;
+ * @param array<mixed> $values is array from old value and new value node;
+ * @param string $type is type node may be 'changed';
+ *
+ * @return array<mixed> return node;
+ */
+function getNodeWithTwoValues(int|string $name, array $values, string $type): array
+{
+    $oldValue = getChangedValue($values[0]);
+    $newValue = getChangedValue($values[1]);
+
+    return [
+        'name' => $name,
+        'type' => $type,
+        'oldValue' => $oldValue,
+        'newValue' => $newValue
+    ];
 }
 
 /**
