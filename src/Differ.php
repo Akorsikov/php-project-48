@@ -94,7 +94,7 @@ function getDifference(object $firstStructure, object $secondStructure): array
                             'deleted'
                         )]
                     );
-                case $secondStructureKeyExists && !$firstStructureKeyExists:
+                case !$firstStructureKeyExists && $secondStructureKeyExists:
                     return array_merge(
                         $carry,
                         [getNodeWithOneValue(
