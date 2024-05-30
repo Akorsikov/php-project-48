@@ -19,7 +19,7 @@ class ExceptionTest extends TestCase
 
         genDiff($path1, $path2, 'stylish');
     }
-    
+
     public function testException2(): void
     {
         $path1 = './tests/fixtures/file1.yml';
