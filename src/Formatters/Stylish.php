@@ -36,18 +36,9 @@ function format(array $nodes, int $level = 1): string
     $result = array_reduce(
         $nodes,
         function ($carry, $item) use ($level) {
-            if ($item['type'] !== 'changed') {
-                $value = getValue($item, $level);
-                $prefix = getPrefix($item['type']);
-                $indent = getIndent($level);
+            $indent = getIndent($level);
 
-                return implode(
-                    '',
-                    [$carry,
-                    "{$indent}{$prefix} {$item['name']}: {$value}\n"]
-                );
-            } else {
-                $indent = getIndent($level);
+            if ($item['type'] === 'changed') {
                 $oldValue = getChangedValue($item, 'oldValue', $level);
                 $newValue = getChangedValue($item, 'newValue', $level);
                 return implode(
@@ -57,6 +48,14 @@ function format(array $nodes, int $level = 1): string
                     "{$indent}+ {$item['name']}: {$newValue}\n"]
                 );
             }
+            $value = getValue($item, $level);
+            $prefix = getPrefix($item['type']);
+
+            return implode(
+                '',
+                [$carry,
+                "{$indent}{$prefix} {$item['name']}: {$value}\n"]
+            );
         },
         ''
     );
