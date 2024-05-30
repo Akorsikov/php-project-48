@@ -23,80 +23,26 @@ namespace Differ\Formaters\Plain;
  */
 function plain(array $nodes, string $path = ''): string
 {
-    return array_reduce($nodes, function ($carry, $item) use ($path, $nodes) {
+    return array_reduce($nodes, function ($carry, $item) use ($path) {
         if (array_key_exists('type', $item)) {
             $nameNode = implode('', [$path, "{$item['name']}."]);
-            $typeCurNode = $item['type'];
-            $prevNode = getPrevNode($item, $nodes);
-            $nextNode = getNextNode($item, $nodes);
-            $typePrevNode = is_null($prevNode) ? null : $prevNode['type'];
-            $typeNextNode = is_null($nextNode) ? null : $nextNode['type'];
-            $namePrevNode = is_null($prevNode) ? null : $prevNode['name'];
-            $nameNextNode = is_null($nextNode) ? null : $nextNode['name'];
+
+
             if (array_key_exists('children', $item)) {
                 return implode('', [$carry, plain($item['children'], $nameNode)]);
             }
-            $value = getNormalizedValue($item);
-            if ($typeCurNode === 'deleted') {
-                if ($typeNextNode === 'added' && $item['name'] === $nameNextNode) {
-                    $newValue = getNormalizedValue($nextNode);
-                    return getTextForProperty('updated', rtrim($nameNode, '.'), $carry, [$value, $newValue]);
-                }
+            if ($item['type'] === 'deleted') {
                 return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
             }
-            if ($typeCurNode === 'added') {
-                if ($typePrevNode !== 'deleted' || $item['name'] !== $namePrevNode) {
-                    return getTextForProperty('added', rtrim($nameNode, '.'), $carry, [$value]);
-                }
+            if ($item['type'] === 'added') {
+                    return getTextForProperty('added', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
+            }
+            if ($item['type'] === 'changed') {
+                return getTextForProperty('changed', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
             }
         }
         return $carry;
     }, '');
-}
-
-/**
- * Function returns an element (node) of an array (tree)
- * preceding the given element in this array.
- *
- * @param array<mixed> $itemNodes Element (node)
- * relative to which the preceding element is searched for.
- * @param array<mixed> $nodes The array in which the search
- * is performed.
- *
- * @return array<mixed>|null The element (node) of the array (tree)
- * preceding the given element. Null if the given element is the first.
- */
-function getPrevNode(array $itemNodes, array $nodes, int $index = 0): array|null
-{
-    if ($itemNodes === $nodes[$index]) {
-        if ($index === 0) {
-            return null;
-        }
-        return $nodes[$index - 1];
-    }
-    return getPrevNode($itemNodes, $nodes, $index + 1);
-}
-
-/**
- * The function returns an element (node) of an array (tree) following
- * the specified element in this array.
- *
- * @param array<mixed> $itemNodes The element relative to which
- * the next element is searched.
- * @param array<mixed> $nodes The array in which the search is performed.
- *
- * @return array<mixed>|null The element (node) of the array (tree)
- * following the specified element. Null if the given element is the last one.
- */
-function getNextNode(array $itemNodes, array $nodes, int $index = 0): array|null
-{
-    if ($itemNodes === $nodes[$index]) {
-        if ($index === count($nodes) - 1) {
-            return null;
-        }
-        return $nodes[$index + 1];
-    }
-    return getNextNode($itemNodes, $nodes, $index + 1);
 }
 
 /**
@@ -105,25 +51,25 @@ function getNextNode(array $itemNodes, array $nodes, int $index = 0): array|null
  *
  * @param string $type for choice of kind text
  * @param string $nameProperty
- * @param string $textAccumulater
+ * @param string $textAccumulator
  * @param array<mixed> $value array from old value and new value of property
  *
  * @return string
  */
-function getTextForProperty(string $type, string $nameProperty, string $textAccumulater, array $value = []): string
+function getTextForProperty(string $type, string $nameProperty, string $textAccumulator, array $value = []): string
 {
     return match ($type) {
         'deleted' => implode(
             '',
-            [$textAccumulater, "Property '{$nameProperty}' was removed\n"]
+            [$textAccumulator, "Property '{$nameProperty}' was removed\n"]
         ),
-        'updated' => implode(
+        'changed' => implode(
             '',
-            [$textAccumulater, "Property '{$nameProperty}' was updated. From {$value[0]} to {$value[1]}\n"]
+            [$textAccumulator, "Property '{$nameProperty}' was updated. From {$value[0]} to {$value[1]}\n"]
         ),
         'added' => implode(
             '',
-            [$textAccumulater, "Property '{$nameProperty}' was added with value: {$value[0]}\n"]
+            [$textAccumulator, "Property '{$nameProperty}' was added with value: {$value[0]}\n"]
         ),
         default => throw new \Exception("Error: There is no such state -'{$type}' for the properties being compared!\n")
     };
@@ -135,25 +81,52 @@ function getTextForProperty(string $type, string $nameProperty, string $textAccu
  * if the argument is not a number or one of the following values:
  * 'true', 'false', 'null'. Otherwise returns the argument as is.
  *
- * @param array<mixed>|null $node
+ * @param array<mixed> $node
  *
- * @return float|int|string|null
+ * @return array<mixed>
  */
-function getNormalizedValue(array|null $node): float|int|string|null
+function getNormalizedValue(array $node): array
 {
-    if (is_array($node) && array_key_exists('value', $node)) {
-        $value = $node['value'];
+    if (array_key_exists('type', $node) && $node['type'] === 'changed') {
+        $oldValue = getChangedValue($node, 'oldValue');
+        $newValue = getChangedValue($node, 'newValue');
+        return [$oldValue, $newValue];
+    }
+    $value = $node['value'];
 
-        if (is_array($value)) {
-            return '[complex value]';
-        }
-
-        if (!in_array($value, ['true', 'false', 'null'], true) && !is_numeric($value)) {
-            return "'{$value}'";
-        }
-
-        return $value;
+    if (is_array($value)) {
+        return ['[complex value]'];
     }
 
-    return null;
+    if (
+        !in_array($value, ['true', 'false', 'null'], true) &&
+        !is_numeric($value)
+    ) {
+        return ["'{$value}'"];
+    }
+
+    return [$value];
+}
+
+/**
+ * Function returns one of tree node values depending on
+ * passed key (‘oldValue’ | ‘newValue’).
+ *
+ * @param array<mixed> $node node of tree
+ * @param string $key key of values
+ *
+ * @return mixed normalized value from tree node with type
+ * 'changed'
+ */
+function getChangedValue(array $node, $key): mixed
+{
+    if (is_array($node[$key])) {
+        return '[complex value]';
+    } elseif (
+        !in_array($node[$key], ['true', 'false', 'null'], true) &&
+        !is_numeric($node[$key])
+    ) {
+        return "'{$node[$key]}'";
+    }
+    return $node[$key];
 }
