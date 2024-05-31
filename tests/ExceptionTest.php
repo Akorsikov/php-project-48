@@ -8,6 +8,7 @@ use function Differ\Differ\genDiff;
 
 class ExceptionTest extends TestCase
 {
+    // Test for exception on invalid file extension;
     public function testException(): void
     {
         $path1 = __DIR__ . '/fixtures/stylishDiff.txt';
@@ -20,6 +21,7 @@ class ExceptionTest extends TestCase
         genDiff($path1, $path2, 'stylish');
     }
 
+    // Check for exceptions for non-existent or unreadable files;
     public function testException2(): void
     {
         $path1 = __DIR__ . '/fixtures/file1.yml';
