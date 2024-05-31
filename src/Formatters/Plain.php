@@ -24,22 +24,19 @@ namespace Differ\Formaters\Plain;
 function plain(array $nodes, string $path = ''): string
 {
     return array_reduce($nodes, function ($carry, $item) use ($path) {
-        if (array_key_exists('type', $item)) {
-            $nameNode = implode('', [$path, "{$item['name']}."]);
+        $nameNode = implode('', [$path, "{$item['name']}."]);
 
-
-            if (array_key_exists('children', $item)) {
-                return implode('', [$carry, plain($item['children'], $nameNode)]);
-            }
-            if ($item['type'] === 'deleted') {
-                return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
-            }
-            if ($item['type'] === 'added') {
-                    return getTextForProperty('added', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
-            }
-            if ($item['type'] === 'changed') {
-                return getTextForProperty('changed', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
-            }
+        if (array_key_exists('children', $item)) {
+            return implode('', [$carry, plain($item['children'], $nameNode)]);
+        }
+        if ($item['type'] === 'deleted') {
+            return getTextForProperty('deleted', rtrim($nameNode, '.'), $carry);
+        }
+        if ($item['type'] === 'added') {
+                return getTextForProperty('added', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
+        }
+        if ($item['type'] === 'changed') {
+            return getTextForProperty('changed', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
         }
         return $carry;
     }, '');
@@ -87,7 +84,7 @@ function getTextForProperty(string $type, string $nameProperty, string $textAccu
  */
 function getNormalizedValue(array $node): array
 {
-    if (array_key_exists('type', $node) && $node['type'] === 'changed') {
+    if ($node['type'] === 'changed') {
         $oldValue = getChangedValue($node, 'oldValue');
         $newValue = getChangedValue($node, 'newValue');
         return [$oldValue, $newValue];
