@@ -15,7 +15,7 @@ use function Differ\Formatters\Json\json;
  *
  * @return string for displaying on the screen
  */
-function formate(array $differences, string $formatter): string
+function format(array $differences, string $formatter): string
 {
     return match ($formatter) {
         'stylish' => stylish($differences),

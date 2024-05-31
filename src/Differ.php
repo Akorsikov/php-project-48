@@ -4,7 +4,7 @@ namespace Differ\Differ;
 
 use Exception;
 
-use function Differ\Formaters\formate;
+use function Differ\Formaters\format;
 use function Differ\Parsers\parser;
 
 /**
@@ -26,7 +26,7 @@ function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'sty
     $secondFileContents = parser($secondFileRawContents, $secondFileFormat);
 
     $differences = getDifference($firstFileContents, $secondFileContents);
-    $outputDiff = formate($differences, $formatter);
+    $outputDiff = format($differences, $formatter);
 
     return $outputDiff;
 }
