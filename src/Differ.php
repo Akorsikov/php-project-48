@@ -84,9 +84,27 @@ function getDifference(object $firstStructure, object $secondStructure): array
 
             switch (true) {
                 case $firstStructureKeyExists && $secondStructureKeyExists:
-                    return getNode($firstStructure, $secondStructure, $item, $carry);
+                    if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
+                        $nestedStructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
+                        $result = array_merge($carry, [getNodeWithOneValue($item, [$nestedStructure], 'unchanged')]);
+                    } elseif ($firstStructure -> $item === $secondStructure -> $item) {
+                        $result = array_merge(
+                            $carry,
+                            [getNodeWithOneValue($item, [$firstStructure -> $item], 'unchanged')]
+                        );
+                    } else {
+                        $result = array_merge(
+                            $carry,
+                            [getNodeWithTwoValues(
+                                $item,
+                                [$firstStructure -> $item, $secondStructure -> $item],
+                                'changed'
+                            )]
+                        );
+                    }
+                    break;
                 case !$secondStructureKeyExists && $firstStructureKeyExists:
-                    return array_merge(
+                    $result = array_merge(
                         $carry,
                         [getNodeWithOneValue(
                             $item,
@@ -94,8 +112,9 @@ function getDifference(object $firstStructure, object $secondStructure): array
                             'deleted'
                         )]
                     );
+                    break;
                 case !$firstStructureKeyExists && $secondStructureKeyExists:
-                    return array_merge(
+                    $result = array_merge(
                         $carry,
                         [getNodeWithOneValue(
                             $item,
@@ -103,7 +122,11 @@ function getDifference(object $firstStructure, object $secondStructure): array
                             'added'
                         )]
                     );
+                    break;
+                default:
+                    throw new \Exception("Error: unforeseen variant of comparing two structures!\n");
             }
+            return $result;
         },
         []
     );
@@ -155,39 +178,6 @@ function getSortedListAllKeys(object $firstTree, object $secondTree): array
 
     return sortArray($listAllKeys);
 }
-
-/**
- * Function create node for two item of structres with same keys
- *
- * @param object $firstStructure;
- * @param object $secondStructure;
- * @param mixed $item;
- * @param mixed $carry;
- *
- * @return array<mixed> return node;
- */
-function getNode(object $firstStructure, object $secondStructure, mixed $item, mixed $carry): array
-{
-    if (is_object($firstStructure -> $item) && is_object($secondStructure -> $item)) {
-        $nestedStructure = getDifference($firstStructure -> $item, $secondStructure -> $item);
-        return array_merge($carry, [getNodeWithOneValue($item, [$nestedStructure], 'unchanged')]);
-    } elseif ($firstStructure -> $item === $secondStructure -> $item) {
-        return array_merge(
-            $carry,
-            [getNodeWithOneValue($item, [$firstStructure -> $item], 'unchanged')]
-        );
-    } else {
-        return array_merge(
-            $carry,
-            [getNodeWithTwoValues(
-                $item,
-                [$firstStructure -> $item, $secondStructure -> $item],
-                'changed'
-            )]
-        );
-    }
-}
-
 
 /**
  * Function returns the child tree of the passed node
