@@ -27,3 +27,9 @@ test-coverage-text:
 
 test-coverage-html:
 	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-html coverage/report/
+
+diff-stylish:
+	bin/gendiff --format stylish tests/fixtures/file1.json tests/fixtures/file2.json
+
+diff-plain:
+	bin/gendiff --format plain tests/fixtures/file1.json tests/fixtures/file2.json
