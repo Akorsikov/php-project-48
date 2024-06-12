@@ -12,7 +12,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @return object object with recursive structure
  */
-function parser(string $fileContent, string $format): object
+function parse(string $fileContent, string $format): object
 {
     return match ($format) {
         'json' => json_decode($fileContent, false),

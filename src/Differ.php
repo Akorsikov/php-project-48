@@ -5,7 +5,7 @@ namespace Differ\Differ;
 use Exception;
 
 use function Differ\Formaters\format;
-use function Differ\Parsers\parser;
+use function Differ\Parsers\parse;
 
 /**
  * Function genDiff is constructed based on how the files have changed
@@ -20,10 +20,10 @@ use function Differ\Parsers\parser;
 function genDiff(string $pathFirst, string $pathSecond, string $formatter = 'stylish'): string
 {
     [$firstFileRawContents, $firstFileFormat] = getFileContents($pathFirst);
-    $firstFileContents = parser($firstFileRawContents, $firstFileFormat);
+    $firstFileContents = parse($firstFileRawContents, $firstFileFormat);
 
     [$secondFileRawContents, $secondFileFormat] = getFileContents($pathSecond);
-    $secondFileContents = parser($secondFileRawContents, $secondFileFormat);
+    $secondFileContents = parse($secondFileRawContents, $secondFileFormat);
 
     $differences = getDifference($firstFileContents, $secondFileContents);
     $outputDiff = format($differences, $formatter);
