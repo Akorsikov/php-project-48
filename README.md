@@ -11,7 +11,7 @@
 ## Prerequisites
 
 - Linux, MacOs, WSL
-- PHP >= 8.0
+- PHP >= 8.3
 - Make
 - Git
 
