@@ -38,6 +38,7 @@ function plain(array $nodes, string $path = ''): string
         if ($item['type'] === 'changed') {
             return getTextForProperty('changed', rtrim($nameNode, '.'), $carry, getNormalizedValue($item));
         }
+
         return $carry;
     }, '');
 }
@@ -87,6 +88,7 @@ function getNormalizedValue(array $node): array
     if ($node['type'] === 'changed') {
         $value1 = getChangedValue($node, 'value1');
         $value2 = getChangedValue($node, 'value2');
+
         return [$value1, $value2];
     }
     $value = $node['value'];
@@ -99,6 +101,7 @@ function getNormalizedValue(array $node): array
         !in_array($value, ['true', 'false', 'null'], true)
     ) {
         $normalizedValue = strtolower(var_export($value, true));
+
         return ["{$normalizedValue}"];
     }
 
@@ -123,7 +126,9 @@ function getChangedValue(array $node, $key): mixed
         !in_array($node[$key], ['true', 'false', 'null'], true)
     ) {
         $changedValue = strtolower(var_export($node[$key], true));
+
         return "{$changedValue}";
     }
+
     return $node[$key];
 }

@@ -69,8 +69,8 @@ function getFileContents(string $filepath): array
  * ] or
  * [
  *  'name'  => '<name of object's property>',
- *  'value1' => '<old value of object's property>',
- *  'value2' => '<new value of object's property>',
+ *  'value1' => '<first value of object's property>',
+ *  'value2' => '<second value of object's property>',
  *  'type'  => 'changed'
  * ]
  */
@@ -126,6 +126,7 @@ function getDifference(object $firstStructure, object $secondStructure): array
                 default:
                     throw new \Exception("Error: unforeseen variant of comparing two structures!\n");
             }
+
             return $result;
         },
         []
@@ -156,6 +157,7 @@ function sortArray(array $array): array
     if (count($array) > 1) {
         $minItem = min($array);
         $subArray = array_filter($array, fn($item) => $item !== $minItem);
+
         return array_merge([$minItem], sortArray($subArray));
     }
 

@@ -42,6 +42,7 @@ function format(array $nodes, int $level = 1): string
             if ($item['type'] === 'changed') {
                 $value1 = getChangedValue($item, 'value1', $level);
                 $value2 = getChangedValue($item, 'value2', $level);
+
                 return implode(
                     '',
                     [$carry,
@@ -156,6 +157,7 @@ function getValue(array $node, int $level): mixed
             return getFormatArray($node['value'], $level + 1);
         }
     }
+
     return $node['value'];
 }
 
@@ -174,7 +176,8 @@ function getChangedValue(array $node, string $keyValue, int $level): mixed
     } else {
         $value = $node[$keyValue];
     }
+
     return (is_bool($value) || is_null($value)) ?
-    strtolower(var_export($value, true)) :
-    $value;
+        strtolower(var_export($value, true)) :
+        $value;
 }
