@@ -33,3 +33,6 @@ diff-stylish:
 
 diff-plain:
 	bin/gendiff --format plain tests/fixtures/file1.json tests/fixtures/file2.json
+
+diff-json:
+	bin/gendiff --format json tests/fixtures/file1.json tests/fixtures/file2.json
