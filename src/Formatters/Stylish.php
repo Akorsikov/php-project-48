@@ -5,6 +5,7 @@ namespace Differ\Formatters\Stylish;
 const NUMBER_INDENT_PER_LEVEL_FOR_TEXT = 4;
 const NUMBER_INDENT_PER_LEVEL_FOR_BRACKETS = 2;
 const SYMBOL_OF_INDENT = ' ';
+const FOR_BRACKETS = true;
 
 /**
  * Function - wrapper, call recursive function.
@@ -59,7 +60,7 @@ function format(array $nodes, int $level = 1): string
         },
         ''
     );
-    $indent = getIndent($level, true);
+    $indent = getIndent($level, FOR_BRACKETS);
 
     return "{\n{$result}{$indent}}";
 }
@@ -94,7 +95,7 @@ function getFormatArray(array $array, int $level): string
         },
         ''
     );
-    $indent = getIndent($level, true);
+    $indent = getIndent($level, FOR_BRACKETS);
 
     return "{\n{$string}{$indent}}";
 }
