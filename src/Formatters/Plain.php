@@ -96,10 +96,10 @@ function getNormalizedValue(array $node): array
     }
 
     if (
-        !in_array($value, ['true', 'false', 'null'], true) &&
-        !is_numeric($value)
+        !in_array($value, ['true', 'false', 'null'], true)
     ) {
-        return ["'{$value}'"];
+        $normalizedValue = strtolower(var_export($value, true));
+        return ["{$normalizedValue}"];
     }
 
     return [$value];
@@ -120,10 +120,10 @@ function getChangedValue(array $node, $key): mixed
     if (is_array($node[$key])) {
         return '[complex value]';
     } elseif (
-        !in_array($node[$key], ['true', 'false', 'null'], true) &&
-        !is_numeric($node[$key])
+        !in_array($node[$key], ['true', 'false', 'null'], true)
     ) {
-        return "'{$node[$key]}'";
+        $changedValue = strtolower(var_export($node[$key], true));
+        return "{$changedValue}";
     }
     return $node[$key];
 }

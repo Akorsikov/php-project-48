@@ -238,31 +238,10 @@ function getNodeWithOneValue(int|string $name, array $values, string $type): arr
  */
 function getNodeWithTwoValues(int|string $name, array $values, string $type): array
 {
-    $value1 = getChangedValue($values[0]);
-    $value2 = getChangedValue($values[1]);
-
     return [
         'name' => $name,
         'type' => $type,
-        'value1' => $value1,
-        'value2' => $value2
+        'value1' => $values[0],
+        'value2' => $values[1]
     ];
-}
-
-/**
- * Function returns the child tree of the passed node with 'changed' type;
- *
- * @param mixed $value of item(node);
- *
- * @return mixed child tree;
- */
-function getChangedValue(mixed $value): mixed
-{
-    if (is_object($value)) {
-        return getChildTree($value);
-    } else {
-        return (is_bool($value) || is_null($value)) ?
-        strtolower(var_export($value, true)) :
-        $value;
-    }
 }

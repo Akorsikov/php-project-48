@@ -173,5 +173,7 @@ function getChangedValue(array $node, string $keyValue, int $level): mixed
     } else {
         $value = $node[$keyValue];
     }
-    return $value;
+    return (is_bool($value) || is_null($value)) ?
+    strtolower(var_export($value, true)) :
+    $value;
 }
