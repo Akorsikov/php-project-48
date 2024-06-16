@@ -39,13 +39,13 @@ function format(array $nodes, int $level = 1): string
             $indent = getIndent($level);
 
             if ($item['type'] === 'changed') {
-                $oldValue = getChangedValue($item, 'oldValue', $level);
-                $newValue = getChangedValue($item, 'newValue', $level);
+                $value1 = getChangedValue($item, 'value1', $level);
+                $value2 = getChangedValue($item, 'value2', $level);
                 return implode(
                     '',
                     [$carry,
-                    "{$indent}- {$item['name']}: {$oldValue}\n",
-                    "{$indent}+ {$item['name']}: {$newValue}\n"]
+                    "{$indent}- {$item['name']}: {$value1}\n",
+                    "{$indent}+ {$item['name']}: {$value2}\n"]
                 );
             }
             $value = getValue($item, $level);

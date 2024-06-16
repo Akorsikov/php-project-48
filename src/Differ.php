@@ -69,8 +69,8 @@ function getFileContents(string $filepath): array
  * ] or
  * [
  *  'name'  => '<name of object's property>',
- *  'oldValue' => '<old value of object's property>',
- *  'newValue' => '<new value of object's property>',
+ *  'value1' => '<old value of object's property>',
+ *  'value2' => '<new value of object's property>',
  *  'type'  => 'changed'
  * ]
  */
@@ -213,9 +213,9 @@ function getNodeWithOneValue(int|string $name, array $values, string $type): arr
         ];
     }
     if (is_object($value)) {
-        $newValue = getChildTree($value);
+        $value2 = getChildTree($value);
     } else {
-        $newValue = (is_bool($value) || is_null($value)) ?
+        $value2 = (is_bool($value) || is_null($value)) ?
         strtolower(var_export($value, true)) :
         $value;
     }
@@ -223,7 +223,7 @@ function getNodeWithOneValue(int|string $name, array $values, string $type): arr
     return [
         'name' => $name,
         'type' => $type,
-        'value' => $newValue
+        'value' => $value2
     ];
 }
 
@@ -238,14 +238,14 @@ function getNodeWithOneValue(int|string $name, array $values, string $type): arr
  */
 function getNodeWithTwoValues(int|string $name, array $values, string $type): array
 {
-    $oldValue = getChangedValue($values[0]);
-    $newValue = getChangedValue($values[1]);
+    $value1 = getChangedValue($values[0]);
+    $value2 = getChangedValue($values[1]);
 
     return [
         'name' => $name,
         'type' => $type,
-        'oldValue' => $oldValue,
-        'newValue' => $newValue
+        'value1' => $value1,
+        'value2' => $value2
     ];
 }
 

@@ -85,9 +85,9 @@ function getTextForProperty(string $type, string $nameProperty, string $textAccu
 function getNormalizedValue(array $node): array
 {
     if ($node['type'] === 'changed') {
-        $oldValue = getChangedValue($node, 'oldValue');
-        $newValue = getChangedValue($node, 'newValue');
-        return [$oldValue, $newValue];
+        $value1 = getChangedValue($node, 'value1');
+        $value2 = getChangedValue($node, 'value2');
+        return [$value1, $value2];
     }
     $value = $node['value'];
 
@@ -107,7 +107,7 @@ function getNormalizedValue(array $node): array
 
 /**
  * Function returns one of tree node values depending on
- * passed key (‘oldValue’ | ‘newValue’).
+ * passed key (‘value1’ | ‘value2’).
  *
  * @param array<mixed> $node node of tree
  * @param string $key key of values
